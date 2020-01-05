@@ -4,8 +4,54 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Log in</title>
 <script src="jquery.min.js"></script>
+<script type = "text/javascript">
+function getFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function(n, i){
+		indexed_array[n['name']] = n['value'];
+    });
+
+    return indexed_array;
+}
+
+
+function login() {
+	var $form = $("#login");
+	var data = getFormData($form);
+	var s = JSON.stringify(data);
+	$.ajax({
+		url: "/KorisnikFrontPage",
+		type:"POST",
+		data: s,
+		contentType:"application/json",
+		dataType:"json",
+		complete: function(data) {
+			//$("#test").html(data.responseText);
+			//await new Promise(r => setTimeout(r, 2000));
+			window.location.assign("KorisnikFrontPage.html");
+		}
+	});
+}
+</script>
 </head>
 <body>
-	<a href="/testSpark">Testiraj</a>
+	<form id = "login">
+		<table>
+			<tr>
+				<td>Email:</td>
+				<td><input type = "text" name = "email"></td>
+			</tr>
+			<tr>
+				<td>Password</td>
+				<td><input type = "password" name = "password"></td>
+			</tr>
+			<tr>
+				<td align = "center" colspan = "2"><input type = "button" value = "Log in" onclick = "login()"></td>
+			</tr>
+		</table>
+		<p id = "test">Neki tekst</p>
+	</form>
 </body>
 </html>
