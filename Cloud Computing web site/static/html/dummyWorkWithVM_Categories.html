@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<script src="../javaScript/jquery.min.js"></script>
+		<script src = "../javaScript/VMCategory.js"></script>
+	</head>
+	<body>
+		<form id = "VMCAT">
+			<table>
+					
+				<tr>
+					<td>Name:</td>
+					<td><input id = "name" type = "text" name = "name"></td>
+					<td><p id = "nameEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Number of cores: </td>
+					<td><input type = "text" name = "numberOfCores" id = "numberOfCores"></td>
+					<td><p id = "NoCEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Gbs of RAM: </td>
+					<td><input type = "text" name = "gbOfRAM" id = "gbOfRAM"></td>
+					<td><p id = "GBoRAMEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Number of GPU cores: </td>
+					<td><input type = "text" name = "numberOfGPUCores" id = "numberOfGPUCores"></td>
+					<td><p id = "NoGPUCEmpty"></p></td>
+				</tr>
+				<tr>
+					<td align = "center" colspan = "3"><input type = "button" value = "Log in" onclick = "addVM_Category()"></td>
+				</tr>
+			</table>	
+		</form>
+
+		<table id = "allVM_Categories">
+
+		</table>
+		<br><br>
+		<hr>
+		<br><br>
+		<form id = "VMCAT_Edit">
+			<table>
+					
+				<tr>
+					<td>Name:</td>
+					<td><input id = "nameEdit" type = "text" name = "name"></td>
+					<td><p id = "nameEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Number of cores: </td>
+					<td><input type = "text" name = "numberOfCores" id = "numberOfCoresEdit"></td>
+					<td><p id = "NoCEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Gbs of RAM: </td>
+					<td><input type = "text" name = "gbOfRAM" id = "gbOfRAMEdit"></td>
+					<td><p id = "GBoRAMEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Number of GPU cores: </td>
+					<td><input type = "text" name = "numberOfGPUCores" id = "numberOfGPUCoresEdit"></td>
+					<td><p id = "NoGPUCEmpty"></p></td>
+				</tr>
+				<tr>
+					<td align = "center" colspan = "3"><input type = "button" value = "Log in" onclick = "confirmEditVM_Category()"></td>
+				</tr>
+			</table>	
+		</form>
+	</body>
+</html>

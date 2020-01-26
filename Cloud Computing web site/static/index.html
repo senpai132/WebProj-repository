@@ -1,57 +1,29 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Log in</title>
-<script src="jquery.min.js"></script>
-<script type = "text/javascript">
-function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
-
-    $.map(unindexed_array, function(n, i){
-		indexed_array[n['name']] = n['value'];
-    });
-
-    return indexed_array;
-}
-
-
-function login() {
-	var $form = $("#login");
-	var data = getFormData($form);
-	var s = JSON.stringify(data);
-	$.ajax({
-		url: "/KorisnikFrontPage",
-		type:"POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			//$("#test").html(data.responseText);
-			//await new Promise(r => setTimeout(r, 2000));
-			window.location.assign("KorisnikFrontPage.html");
-		}
-	});
-}
-</script>
-</head>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Log in</title>
+		<script src = "javaScript/jquery.min.js"></script>
+		<script src = "javaScript/index.js"></script>
+	</head>
 <body>
 	<form id = "login">
 		<table>
 			<tr>
 				<td>Email:</td>
-				<td><input type = "text" name = "email"></td>
+				<td><input id = "email" type = "email" name = "email"></td>
+				<td><p id = "mailError"></p></td>
 			</tr>
 			<tr>
 				<td>Password</td>
-				<td><input type = "password" name = "password"></td>
+				<td><input type = "password" name = "password" id = "password"></td>
+				<td><p id = "passError"></p></td>
 			</tr>
 			<tr>
-				<td align = "center" colspan = "2"><input type = "button" value = "Log in" onclick = "login()"></td>
+				<td align = "center" colspan = "3"><input type = "button" value = "Log in" onclick = "login()"></td>
 			</tr>
 		</table>
-		<p id = "test">Neki tekst</p>
+		<p id = "invalidLogIn"></p>
 	</form>
 </body>
 </html>
