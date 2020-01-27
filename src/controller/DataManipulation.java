@@ -4,29 +4,32 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import beans.User;
 import enums.Roles;
 
-public class LogInLogic {
-	public static Boolean Authenticate(User u)
+public class DataManipulation {
+	public static HashMap<String, User> ReadUsers(String filePath)
 	{
+		HashMap<String, User> users = new HashMap<String, User>();
+		
 		BufferedReader br;
-		String fs = System.getProperty("file.separator");
+
 		String line = "";
 		try {
-			br = new BufferedReader(new FileReader("."+fs+"data"+fs+"Users.txt"));
+			br = new BufferedReader(new FileReader(filePath));
 			while((line = br.readLine()) != null)
 			{
+				User u = new User();
 				String[] parts = line.split("\\|");
-				if(u.getEmail().equals(parts[0]) && u.getPassword().equals(parts[1]))
-				{
-					u.setName(parts[2]);
-					u.setLastName(parts[3]);
-					u.setOrganizacija(parts[4]);
-					u.setRole(Roles.valueOf(parts[5]));
-					return true;
-				}
+				u.setEmail(parts[0]);
+				u.setPassword(parts[1]);
+				u.setName(parts[2]);
+				u.setLastName(parts[3]);
+				u.setOrganizacija(parts[4]);
+				u.setRole(Roles.valueOf(parts[5]));
+				users.put(u.getEmail(), u);
 					
 			}
 			br.close();
@@ -37,7 +40,7 @@ public class LogInLogic {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
+		return users;
 	}
 
 }

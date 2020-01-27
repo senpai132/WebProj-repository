@@ -9,6 +9,7 @@ import static spark.Spark.staticFiles;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,7 +17,8 @@ import com.google.gson.reflect.TypeToken;
 import beans.Disc;
 import beans.User;
 import beans.VirtualMachineCategory;
-import controller.LogInLogic;
+import controller.DataManipulation;
+import enums.Roles;
 import logicForDiscs.DiscsHandler;
 import logicForVM_Categories.VM_CategoriesHandler;
 import spark.Session;
@@ -25,26 +27,38 @@ public class SparkMainApp {
 	
 	private static Gson g = new Gson();
 
+	public static HashMap<String, User> users;
+	
 	public static void main(String[] args) throws Exception {
 		port(8080);
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
-		post("/login", (req,res) -> {
+		String fs = System.getProperty("file.separator");
+		//users = DataManipulation.ReadUsers("."+fs+"data"+fs+"users.txt");
+		users = new HashMap<String, User>();
+		
+		if (users.size() == 0)
+			users.put("admin@admin.com", new User("admin@admin.com", "admin", "admin", "admin", null, Roles.SUPERADMIN));
+		
+		post("/rest/login", (req,res) -> {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
+			String message = "false";
 			
-			if(!LogInLogic.Authenticate(u))
-				return "Invalid email or password";
+			User loaded = users.get(u.getEmail());
 			
-			Session ss = req.session(true);
-			User user = ss.attribute("user");
-			if (user == null) {
-				user = u;
-				ss.attribute("user", user);
+			if (loaded != null && loaded.getPassword().equals(u.getPassword())) {
+				Session ss = req.session(true);
+				User user = ss.attribute("user");
+				if (user == null) {
+					user = u;
+					ss.attribute("user", user);
+					message = "true";
+				}
 			}
 			
-			return true;
+			return "{\"message\": " + message + "}";
 		});
 		
 		get("/preuzmiKorisnika", (req, res) -> {
