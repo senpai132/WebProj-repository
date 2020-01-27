@@ -3,16 +3,21 @@ package rest;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
+import static spark.Spark.delete;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import beans.Disc;
 import beans.User;
 import beans.VirtualMachineCategory;
 import controller.LogInLogic;
+import logicForDiscs.DiscsHandler;
 import logicForVM_Categories.VM_CategoriesHandler;
 import spark.Session;
 
@@ -21,7 +26,7 @@ public class SparkMainApp {
 	private static Gson g = new Gson();
 
 	public static void main(String[] args) throws Exception {
-		port(8083);
+		port(8080);
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
@@ -108,6 +113,46 @@ public class SparkMainApp {
 			ArrayList<VirtualMachineCategory> VM_Categories = ss.attribute("VMCategories");
 
 			return VM_CategoriesHandler.editVM_Category(VM_Categories, catToBeEdited, editedCat);
+		});
+		
+		post("/addDisc", (req, res) ->{
+			res.type("application/json");
+			Disc disc = g.fromJson(req.body(), Disc.class);
+			Session ss = req.session(true);
+			HashMap<String, Disc> discs = ss.attribute("Discs"); 
+			
+			if(discs == null)
+				ss.attribute("Discs", new HashMap<String, Disc>());
+			discs = ss.attribute("Discs"); 
+
+			return DiscsHandler.addDisc(discs, disc);
+		});
+		
+		get("/getDiscs", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			HashMap<String, Disc> discs = ss.attribute("Discs"); 
+			
+			return g.toJson(discs.values());
+		});
+		
+		delete("/deleteDisc", (req, res) -> {
+			String payload = req.body();
+			Disc disc = g.fromJson(payload, Disc.class);
+			Session ss = req.session(true);
+			HashMap<String, Disc> discs = ss.attribute("Discs"); 
+			
+			return DiscsHandler.removeDisc(discs, disc);
+		});
+		
+		post("/editDisc", (req, res) ->{
+			res.type("application/json");
+			Disc[] discPair = g.fromJson(req.body(), Disc[].class);
+			
+			Session ss = req.session(true);
+			HashMap<String, Disc> discs = ss.attribute("Discs"); 
+			
+			return DiscsHandler.editDisc(discs, discPair);
 		});
 	
 	}
