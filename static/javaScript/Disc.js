@@ -12,6 +12,9 @@ function getFormData($form)
 
 function addDisc()
 {
+	if(!validator("name", "capacity", "Empty"))
+		return;
+
 	var $form = $("#addDisc");
 	var d = getFormData($form);
 	var s = JSON.stringify(d);
@@ -97,17 +100,56 @@ function setEditFormValues(vmc)
 {
 	document.getElementById("nameEdit").value = vmc.name;
 	$("#typeEdit").val(""+vmc.type);
-	document.getElementById("gbOfRAMEdit").value = vmc.capacity;
-	document.getElementById("numberOfGPUCoresEdit").value = vmc.parentVM;	
+	document.getElementById("capacityEdit").value = vmc.capacity;
+	document.getElementById("parentVM_Edit").value = vmc.parentVM;	
+}
+
+function validator(name, capacity, mode)
+{
+	ind = true;
+
+	if(!validateStringInput(name, mode))
+		ind =  false;
+	if(!validateIntInput(capacity, mode))
+		ind = false;
+
+	return ind;
+}
+
+function validateStringInput(id, mode)
+{
+	$("#"+id+mode).html("");
+
+	if(document.getElementById(id+"").value === "")
+	{
+		$("#"+id+mode).html("<font color=\"red\">This field is required</font>");
+		return false;
+	}
+	return true;
+}
+
+function validateIntInput(id, mode)
+{
+	$("#"+id+mode).html("");
+
+	if(document.getElementById(id+"").value >>> 0 === parseFloat(document.getElementById(id+"").value) == false)
+	{
+		$("#"+id+mode).html("<font color=\"red\">This field must be a positive integer</font>");
+		return false;
+	}
+	return true;
 }
 
 function editDisc()
 {
+	if(!validator("nameEdit", "capacityEdit", "EmptyEdit"))
+		return;
+
 	var $form = $("#DiscEdit");
 	var data = getFormData($form);
-	//var s = JSON.stringify(data);
 	discPair = [discToEdit, data];
 	s = JSON.stringify(discPair);
+
 	$.ajax({
 		url: "/editDisc",
 		type: "POST",
@@ -130,8 +172,7 @@ function findDiscForEdit(name, callback)
 		{
 			discToEdit = item;
 			callback(item);
-		}
-			
+		}			
 	});
 }
 
@@ -142,8 +183,7 @@ function findDisc(name, callback)
 		if(name === item.name)
 		{
 			callback(item);
-		}
-			
+		}		
 	});
 }
 
