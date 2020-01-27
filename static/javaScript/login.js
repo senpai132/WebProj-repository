@@ -1,5 +1,3 @@
-$(document).ready(initApp)
-
 function getFormData($form){
 		var unindexed_array = $form.serializeArray();
 		var indexed_array = {};
@@ -9,19 +7,6 @@ function getFormData($form){
 		});
 
 		return indexed_array;
-}
-
-function initApp()
-{
-	$.ajax({
-		url: "/initApp",
-		type: "GET",
-		contentType: "application/json",
-		dataType: "json",
-		complete: function(data){
-
-		}
-	});
 }
 
 function login() {
@@ -42,20 +27,43 @@ function login() {
 	var $form = $("#login");
 	var data = getFormData($form);
 	var s = JSON.stringify(data);
-}
-	
-function isLoggedOut() {
 	$.ajax({
-		url: "rest/isLoggedIn",
+		url: "/rest/login",
+		type:"POST",
+		data: s,
+		contentType:"application/json",
+		dataType:"json",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			if(!d.message)
+			{
+				$("#invalidLogIn").html("Invalid email or password");
+			}
+			else 
+				window.location.replace("/");
+		}
+	});
+}
+
+function isLoggedIn() {
+	$.ajax({
+		url: "../rest/isLoggedIn",
 		type: "GET",
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
-			if(!d.loggedIn) {
-				window.location.replace("/html/login.html");
-			}
-			else {
-				//TODO ovde ide dalje ucitavanje
+			console.log(d)
+			if(d.loggedIn) {
+				window.location.replace("/");
 			}
 		}
 	});
+}
+
+function checkPassword() {
+	return document.getElementById("password").value === "";
+}
+
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
 }
