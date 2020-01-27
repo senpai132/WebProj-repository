@@ -89,6 +89,17 @@ public class SparkMainApp {
 			User u = ss.attribute("user");
 			return g.toJson(u);
 		});
+		
+		get("/rest/isLoggedIn", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String loggedIn = "true";
+			if (u == null)
+				loggedIn = "false";
+				
+			return "{\"loggedIn\":" + loggedIn + "}";
+		});
 
 		post("/addVM_Category", (req, res) ->{
 			res.type("application/json");

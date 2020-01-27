@@ -45,6 +45,20 @@ function login() {
 	});
 }
 
+function isLoggedIn() {
+	$.ajax({
+		url: "../rest/isLoggedIn",
+		type: "GET",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			console.log(d)
+			if(d.loggedIn) {
+				window.location.replace("/");
+			}
+		}
+	});
+}
+
 function checkPassword() {
 	return document.getElementById("password").value === "";
 }
