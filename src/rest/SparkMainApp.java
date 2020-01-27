@@ -1,6 +1,7 @@
 package rest;
 
 import static spark.Spark.get;
+import static spark.Spark.after;
 import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.delete;
@@ -61,25 +62,34 @@ public class SparkMainApp {
 			return "{\"message\": " + message + "}";
 		});
 		
-		get("/preuzmiKorisnika", (req, res) -> {
+		get("/rest/logout", (req, res) -> {
 			res.type("application/json");
-			Session ss = req.session(true);
-			User u = ss.attribute("user");
-			return g.toJson(u);
-		});
-		
-		get("/logout", (req, res) -> {
-			//res.type("application/json");
 			Session ss = req.session(true);
 			User user = ss.attribute("user");
 			
 			if (user != null) {
 				ss.invalidate();
 			}
-			res.redirect("/index.html");
-			return true;
+
+			return "{\"message\": true}";
 		});
 		
+		after("/rest/logout", (req, res) -> {
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			
+			if (user == null) {
+				res.redirect("/html/login.html", 301);
+			}
+		});
+		
+		get("/preuzmiKorisnika", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			return g.toJson(u);
+		});
+
 		post("/addVM_Category", (req, res) ->{
 			res.type("application/json");
 			VirtualMachineCategory vmc = g.fromJson(req.body(), VirtualMachineCategory.class);
