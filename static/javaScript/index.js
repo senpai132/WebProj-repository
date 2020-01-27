@@ -1,3 +1,5 @@
+$(document).ready(initApp)
+
 function getFormData($form){
 		var unindexed_array = $form.serializeArray();
 		var indexed_array = {};
@@ -7,6 +9,19 @@ function getFormData($form){
 		});
 
 		return indexed_array;
+}
+
+function initApp()
+{
+	$.ajax({
+		url: "/initApp",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data){
+
+		}
+	});
 }
 
 function login() {

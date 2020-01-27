@@ -1,3 +1,7 @@
+$(document).ready(function() {
+	initSelectTag("parentVMSelect")
+});
+
 function getFormData($form)
 {
 	var unindexed_array = $form.serializeArray();
@@ -8,6 +12,28 @@ function getFormData($form)
 	});
 
 	return indexed_array;
+}
+
+function initSelectTag(id)
+{
+	$.ajax({
+		url: "/getVMs",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			VMs = JSON.parse(data.responseText);
+			$("#"+id).html("");
+			VMs.forEach(function(item){
+				$("#"+id).append(
+					"<option value = \"" + item.name + "\">" +
+					item.name + 
+					"</option>"
+				);
+			});
+		}
+	});
 }
 
 function addDisc()
@@ -59,9 +85,9 @@ function listDiscs()
 		dataType: "json",
 		complete: function(data){
 			var discs = JSON.parse(data.responseText);
-			$("#allVM_Categories").html("");
+			$("#allDiscs").html("");
 			discs.forEach(function(item, indeks){
-				$("#allVM_Categories").append(
+				$("#allDiscs").append(
 					"<tr>" +
 					"<td>"+item.name+"</td>" +
 					"<td>"+item.type+"</td>" +
@@ -78,6 +104,7 @@ function listDiscs()
 
 function initEdit(name)
 {
+	initSelectTag("parentVMSelectEdit");
 	getEditDiscs(name, findDiscForEdit);
 }
 
@@ -101,7 +128,7 @@ function setEditFormValues(vmc)
 	document.getElementById("nameEdit").value = vmc.name;
 	$("#typeEdit").val(""+vmc.type);
 	document.getElementById("capacityEdit").value = vmc.capacity;
-	document.getElementById("parentVM_Edit").value = vmc.parentVM;	
+	$("#parentVMSelectEdit").val (""+vmc.parentVM);	
 }
 
 function validator(name, capacity, mode)

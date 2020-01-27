@@ -1,53 +1,36 @@
 package logicForVM_Categories;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import beans.VirtualMachineCategory;
 
 public class VM_CategoriesHandler {
 
-	public static boolean addVM_Category(ArrayList<VirtualMachineCategory> VM_Categories, VirtualMachineCategory VM_category)
+	public static boolean addVM_Category(HashMap<String, VirtualMachineCategory> VM_Categories, VirtualMachineCategory VM_category)
 	{
-		for(VirtualMachineCategory vcm : VM_Categories)
-			if(vcm.getName().equals(VM_category.getName()))
-				return false;
+		if(VM_Categories.containsKey(VM_category.getName()))
+			return false;
 		
-		VM_Categories.add(VM_category);
+		VM_Categories.put(VM_category.getName(), VM_category);
 		return true;
 	}
 	
-	public static boolean deleteVM_Category(ArrayList<VirtualMachineCategory> VM_Categories, String name/*, ArrayList<VirtualMachine> VMs*/)
+	public static boolean deleteVM_Category(HashMap<String, VirtualMachineCategory> VM_Categories, VirtualMachineCategory vmc/*, ArrayList<VirtualMachine> VMs*/)
 	{
-		VirtualMachineCategory VM_Category = null;
+		//izvrsi proveru da li je postoji VM
+		if(!VM_Categories.containsKey(vmc.getName()))
+			return false;
 		
-		//Proveri da li postoji VM koja je te kategorije
-		
-		for(VirtualMachineCategory vmc : VM_Categories)
-			if(vmc.getName().equals(name))
-				VM_Category = vmc;
-				
-		if(VM_Category != null)
-		{
-			VM_Categories.remove(VM_Category);
-			return true;
-		}
-		
-		return false;
+		VM_Categories.remove(vmc.getName());
+		return true;
 	}
 	
-	public static boolean editVM_Category(ArrayList<VirtualMachineCategory> VM_Categories, VirtualMachineCategory toBeEdited, VirtualMachineCategory editCat)
+	public static boolean editVM_Category(HashMap<String, VirtualMachineCategory> VM_Categories, VirtualMachineCategory[] VMC_Pair)
 	{				
-		for(VirtualMachineCategory vmc : VM_Categories)
-			if(vmc.getName().equals(toBeEdited.getName()))
-			{
-				vmc.setGbOfRAM(editCat.getGbOfRAM());
-				vmc.setNumberOfCores(editCat.getNumberOfCores());
-				vmc.setNumberOfGPUCores(editCat.getNumberOfGPUCores());
-				vmc.setName(editCat.getName());
-				return true;
-			}
+		VM_Categories.remove(VMC_Pair[0].getName());
+		VM_Categories.put(VMC_Pair[1].getName(), VMC_Pair[1]);
 		
-		return false;
-				
+		return true;		
 	}
 }

@@ -50,6 +50,11 @@ public class VirtualMachineCategory {
 	public void setNumberOfGPUCores(int numberOfGPUCores) {
 		this.numberOfGPUCores = numberOfGPUCores;
 	}
-	
+
+	@Override
+	public String toString() {
+		return name + "|" + numberOfCores + "|" + gbOfRAM
+				+ "|" + numberOfGPUCores;
+	}
 	
 }

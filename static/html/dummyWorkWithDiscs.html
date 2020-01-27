@@ -24,13 +24,18 @@
 				</tr>
 				<tr>
 					<td>Capacity: </td>
-					<td><input type = "text" name = "capacity" id = "capacity"></td>
+					<td>
+						<input type = "text" name = "capacity" id = "capacity">
+					</td>
 					<td><p id = "capacityEmpty"></p></td>
 				</tr>
 				<tr>
 					<td>Parent VM: </td>
-					<td><input type = "text" name = "parentVM" id = "parentVM"></td>
-					<td><p id = "parentVM_Empty"></p></td>
+					<td>
+						<select name = "parentVM" id = "parentVMSelect">
+							
+						</select>
+					</td>
 				</tr>
 				<tr>
 					<td align = "center" colspan = "3"><input type = "button" value = "Add" onclick = "addDisc()"></td>
@@ -38,7 +43,7 @@
 			</table>	
 		</form>
 
-		<table id = "allVM_Categories">
+		<table id = "allDiscs">
 
 		</table>
 		<br><br>
@@ -69,7 +74,11 @@
 				</tr>
 				<tr>
 					<td>Parent VM: </td>
-					<td><input type = "text" name = "parentVM" id = "parentVM_Edit"></td>
+					<td>
+						<select name = "parentVM" id = "parentVMSelectEdit">
+							
+						</select>
+					</td>
 					<td><p id = "parentVM_Empty"></p></td>
 				</tr>
 				<tr>

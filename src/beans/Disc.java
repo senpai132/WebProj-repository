@@ -52,6 +52,11 @@ public class Disc {
 	public void setParentVM(String parentVM) {
 		this.parentVM = parentVM;
 	}
+
+	@Override
+	public String toString() {
+		return name + "|" + type + "|" + capacity + "|" + parentVM;
+	}
 	
 	
 }

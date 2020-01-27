@@ -12,6 +12,9 @@ function getFormData($form)
 
 function addVM_Category()
 {
+	if(!validator("name", "numberOfCores", "gbOfRAM", "numberOfGPUCores", "Empty"))
+		return;
+
 	var $form = $("#VMCAT");
 	var d = getFormData($form);
 	var s = JSON.stringify(d);
@@ -32,14 +35,16 @@ function addVM_Category()
 
 function removeVM_Category(name)
 {
+	s = JSON.stringify(name);
 	$.ajax({
-		url: '/DeleteVM_Category/'+name,
-		type: "GET",
+		url: '/DeleteVM_Category',
+		type: "DELETE",
 		contentType:"application/json",
 		dataType:"json",
+		data: s,
 		complete: function()
 		{
-			alert("Alert VM Cat successufully deleted");
+			alert("VM Cat successufully deleted");
 			listVM_Categories();
 		}
 	});
@@ -62,8 +67,8 @@ function listVM_Categories()
 					"<td>"+VM_Categories[indeks].numberOfCores+"</td>" +
 					"<td>"+VM_Categories[indeks].gbOfRAM+"</td>" +
 					"<td>"+VM_Categories[indeks].numberOfGPUCores+"</td>" + 
-					"<td><a onclick = \"removeVM_Category('"+VM_Categories[indeks].name+"')\">Delete</a></td>" + 
-					"<td><a onclick = \"editVM_Category('" + item.name + "')\">Edit</a></td>" + 
+					"<td><a onclick = \"initDeleteVM_Category('"+VM_Categories[indeks].name+"')\">Delete</a></td>" + 
+					"<td><a onclick = \"initEditVM_Category('" + item.name + "')\">Edit</a></td>" + 
 					"</tr>"
 				);
 			});
@@ -71,36 +76,94 @@ function listVM_Categories()
 	});
 }
 
-function editVM_Category(vmc)
+function initEditVM_Category(name)
+{
+	getEditVMCs(name, findVMCsForEdit);
+}
+
+function findVMCsForEdit(name, callback)
+{
+	VMCsReturned.forEach(function(item)
+	{
+		if(name === item.name)
+		{
+			VMCToEdit = item;
+			callback(item);
+		}			
+	});
+}
+
+function getEditVMCs(name, callback)
 {
 	$.ajax({
-		url: '/getVM_Categories',
+		url: "/getVM_Categories",
 		type: "GET",
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data){
-			var VM_Categories = JSON.parse(data.responseText);
-			VM_Categories.forEach(function(item, indeks){
-				if(item.name === vmc)
-				{
-					setEditFormValues(item);
-					s = JSON.stringify(item);
-					$.ajax({
-					url: '/EditVM_Category',
-					type: "POST",
-					data: s,
-					contentType:"application/json",
-					dataType:"json"
-				});
-				}
-				
-			});	
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			VMCsReturned = JSON.parse(data.responseText);
+			callback(name, setEditFormValues);
 		}
 	});
-	//window.location.assign("../html/EditVM_Category.html");
-
-	
 }
+
+function initDeleteVM_Category(name)
+{
+	getVMCs(name, findVMC);	
+}
+
+function findVMC(name, callback)
+{
+	VMCsReturned.forEach(function(item)
+	{
+		if(name === item.name)
+		{
+			callback(item);
+		}		
+	});
+}
+
+function editVMC()
+{
+	if(!validator("nameEdit", "numberOfCoresEdit", "gbOfRAMEdit", "numberOfGPUCoresEdit", "EmptyEdit"))
+		return;
+
+	var $form = $("#VMCAT_Edit");
+	var data = getFormData($form);
+	VMCPair = [VMCToEdit, data];
+	s = JSON.stringify(VMCPair);
+
+	$.ajax({
+		url: "/EditVM_Category",
+		type: "POST",
+		contentType: "application/json",
+		dataType: "json",
+		data: s,
+		success: function()
+		{
+			alert("VMC edited successfully");
+			listVM_Categories();
+		}
+	});
+}
+
+function getVMCs(name, callback)
+{
+	$.ajax({
+		url: "/getVM_Categories",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			VMCsReturned = JSON.parse(data.responseText);
+			callback(name, removeVM_Category);
+		}
+	});
+}
+
+
 
 function setEditFormValues(vmc)
 {
@@ -110,20 +173,42 @@ function setEditFormValues(vmc)
 	document.getElementById("numberOfGPUCoresEdit").value = vmc.numberOfGPUCores;	
 }
 
-function confirmEditVM_Category()
+function validator(name, cores, ram, gpu, mode)
 {
-	var $form = $("#VMCAT_Edit");
-	var d = getFormData($form);
-	var s = JSON.stringify(d);
+	ind = true;
 
-	$.ajax({
-		url: '/SaveEditVM_Category',
-		type: "POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(){
-			listVM_Categories();
-		}
-	});
+	if(!validateStringInput(name, mode))
+		ind =  false;
+	if(!validateIntInput(cores, mode))
+		ind = false;
+	if(!validateIntInput(ram, mode))
+		ind = false;
+	if(!validateIntInput(gpu, mode))
+		ind = false;
+
+	return ind;
+}
+
+function validateStringInput(id, mode)
+{
+	$("#"+id+mode).html("");
+
+	if(document.getElementById(id+"").value === "")
+	{
+		$("#"+id+mode).html("<font color=\"red\">This field is required</font>");
+		return false;
+	}
+	return true;
+}
+
+function validateIntInput(id, mode)
+{
+	$("#"+id+mode).html("");
+
+	if(document.getElementById(id+"").value >>> 0 === parseFloat(document.getElementById(id+"").value) == false)
+	{
+		$("#"+id+mode).html("<font color=\"red\">This field must be a positive integer</font>");
+		return false;
+	}
+	return true;
 }
