@@ -1,2 +1,0 @@
-Dime1|HDD|2|Dp1
-Dime2|SDD|3|Dp2

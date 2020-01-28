@@ -40,7 +40,7 @@ public class SparkMainApp {
 	public static HashMap<String, VirtualMachineCategory> vmcs;
 	
 	public static void main(String[] args) throws Exception {
-		port(8080);
+		port(8084);
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
@@ -178,39 +178,27 @@ public class SparkMainApp {
 				System.out.println("Usao");
 				e.printStackTrace();
 				return false;		
-			}
+			} 
 			
-			Session ss = req.session(true);
-			HashMap<String, VirtualMachineCategory> VM_Categories = ss.attribute("VMCategories"); 
-			
-			if(VM_Categories == null)
-				ss.attribute("VMCategories", new HashMap<String, VirtualMachineCategory>());
-			VM_Categories = ss.attribute("VMCategories"); 
 
-			return VM_CategoriesHandler.addVM_Category(VM_Categories, vmc);
+			return VM_CategoriesHandler.addVM_Category(vmcs, vmc);
 		});
 		
 		get("/getVM_Categories", (req, res) -> {
-			Session ss = req.session(true);
-			HashMap<String, VirtualMachineCategory> VM_Categories = ss.attribute("VMCategories"); 
+			res.type("application/json"); 
 
-			return g.toJson(VM_Categories.values());
+			return g.toJson(vmcs.values());
 		});
 		
 		delete("/DeleteVM_Category", (req, res) -> {
-			Session ss = req.session(true);
 			VirtualMachineCategory vmc = g.fromJson(req.body(), VirtualMachineCategory.class);
-			HashMap<String, VirtualMachineCategory> VM_Categories = ss.attribute("VMCategories"); 
 			
-			return VM_CategoriesHandler.deleteVM_Category(VM_Categories, vmc);
+			return VM_CategoriesHandler.deleteVM_Category(vmcs, vmc);
 		});
 		
 		post("/EditVM_Category", (req, res) -> {
 			res.type("application/json");
 			VirtualMachineCategory[] VMC_Pair = g.fromJson(req.body(), VirtualMachineCategory[].class);
-			
-			Session ss = req.session(true);
-			HashMap<String, VirtualMachineCategory> vmcs = ss.attribute("VMCategories"); 
 			
 			return VM_CategoriesHandler.editVM_Category(vmcs, VMC_Pair);
 		});
@@ -218,22 +206,12 @@ public class SparkMainApp {
 		post("/addDisc", (req, res) ->{
 			res.type("application/json");
 			Disc disc = g.fromJson(req.body(), Disc.class);
-			Session ss = req.session(true);
-			HashMap<String, Disc> discs = ss.attribute("Discs"); 
-			
-			if(discs == null)
-				ss.attribute("Discs", new HashMap<String, Disc>());
-			discs = ss.attribute("Discs"); 
-			
-			HashMap<String, VirtualMachine> vms = ss.attribute("VMs");
 
 			return DiscsHandler.addDisc(discs, disc, vms);
 		});
 		
 		get("/getDiscs", (req, res) -> {
 			res.type("application/json");
-			Session ss = req.session(true);
-			HashMap<String, Disc> discs = ss.attribute("Discs"); 
 			
 			return g.toJson(discs.values());
 		});
@@ -241,10 +219,6 @@ public class SparkMainApp {
 		delete("/deleteDisc", (req, res) -> {
 			String payload = req.body();
 			Disc disc = g.fromJson(payload, Disc.class);
-			Session ss = req.session(true);
-			HashMap<String, Disc> discs = ss.attribute("Discs"); 
-			
-			HashMap<String, VirtualMachine> vms = ss.attribute("VMs");
 			
 			return DiscsHandler.removeDisc(discs, disc, vms);
 		});
@@ -253,11 +227,6 @@ public class SparkMainApp {
 			res.type("application/json");
 			Disc[] discPair = g.fromJson(req.body(), Disc[].class);
 			
-			Session ss = req.session(true);
-			HashMap<String, Disc> discs = ss.attribute("Discs"); 
-			
-			HashMap<String, VirtualMachine> vms = ss.attribute("VMs");
-			
 			return DiscsHandler.editDisc(discs, discPair, vms);
 		});
 		
@@ -265,30 +234,46 @@ public class SparkMainApp {
 			res.type("application/json");
 			VirtualMachine vm = g.fromJson(req.body(), VirtualMachine.class);
 			Session ss = req.session(true);
-			HashMap<String, VirtualMachine> vms = ss.attribute("VMs"); 
 			
-			if(vms == null)
-				ss.attribute("VMs", new HashMap<String, Disc>());
-			vms = ss.attribute("VMs"); 
+			String[] selectedDiscs = ss.attribute("selectedDiscs");
 			
-			return VirtualMachineHandler.addVM(vms, vm);
+			if(selectedDiscs == null)
+				System.out.println("prosa");
+			
+			return VirtualMachineHandler.addVM(vms, vm, selectedDiscs, discs);
 		});
 		
 		get("/getVMs", (req, res) -> {
 			res.type("application/json");
-			Session ss = req.session(true);
-			HashMap<String, VirtualMachine> vms = ss.attribute("VMs"); 
 			
 			return g.toJson(vms.values());
 		});
 		
 		delete("/deleteVM", (req, res) -> {
 			String payload = req.body();
-			VirtualMachine vm = g.fromJson(payload, VirtualMachine.class);
-			Session ss = req.session(true);
-			HashMap<String, VirtualMachine> vms = ss.attribute("VMs"); 
+			VirtualMachine vm = g.fromJson(payload, VirtualMachine.class); 
 			
-			return VirtualMachineHandler.removeDisc(vms, vm);
+			return VirtualMachineHandler.removeDisc(vms, vm, discs);
+		});
+		
+		get("/getFreeDiscs", (req, res)->{
+			res.type("application/json");
+			
+			ArrayList<Disc> freeDiscs = DiscsHandler.getFreeDiscs(discs);
+			
+			return g.toJson(freeDiscs);
+		});
+		
+		post("/saveSelectedDiscs", (req, res) ->{
+			String[] selectedDiscs = g.fromJson(req.body(), String[].class);
+			
+			if(selectedDiscs.length < 1)
+				selectedDiscs = new String[0];
+			
+			Session ss = req.session(true);
+			ss.attribute("selectedDiscs", selectedDiscs);
+			
+			return true;
 		});
 	
 	}

@@ -1,5 +1,6 @@
 $(document).ready(function() {
-	initSelectTag("parentVMSelect")
+	initSelectTag("parentVMSelect");
+	initSelectTag("parentVMSelectEdit");
 });
 
 function getFormData($form)
@@ -25,6 +26,7 @@ function initSelectTag(id)
 		{
 			VMs = JSON.parse(data.responseText);
 			$("#"+id).html("");
+			$("#"+id).append("<option value = \"\"></option>");
 			VMs.forEach(function(item){
 				$("#"+id).append(
 					"<option value = \"" + item.name + "\">" +
@@ -104,7 +106,7 @@ function listDiscs()
 
 function initEdit(name)
 {
-	initSelectTag("parentVMSelectEdit");
+	//initSelectTag("parentVMSelectEdit");
 	getEditDiscs(name, findDiscForEdit);
 }
 
@@ -128,7 +130,7 @@ function setEditFormValues(vmc)
 	document.getElementById("nameEdit").value = vmc.name;
 	$("#typeEdit").val(""+vmc.type);
 	document.getElementById("capacityEdit").value = vmc.capacity;
-	$("#parentVMSelectEdit").val (""+vmc.parentVM);	
+	$("#parentVMSelectEdit").val(vmc.parentVM);	
 }
 
 function validator(name, capacity, mode)

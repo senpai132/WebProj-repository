@@ -1,5 +1,6 @@
 $(document).ready(function() {
 		initSelectTags("category", "organisation");
+		initFreeDisks();
 	});
 
 function getFormData($form)
@@ -12,6 +13,51 @@ function getFormData($form)
 	});
 
 	return indexed_array;
+}
+
+function initFreeDisks()
+{
+	$.ajax({
+		url: "/getFreeDiscs",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			freeDiscs = JSON.parse(data.responseText);
+			$("#freeDiscs").html("");
+			freeDiscs.forEach(function(item){
+				$("#freeDiscs").append(
+					"<tr>" +
+					"<td>"+item.name+"</td>" +
+					"<td>"+item.type+"</td>" +
+					"<td>"+item.capacity+"</td>" +
+					"<td><input type=\"checkbox\" name = \""+item.name+"\" value = \""+item.name+"\"></td>" + 
+					"</tr>"
+				);
+			});
+		}
+	});
+}
+
+function saveSelectedDiscs(callback)
+{
+	var sList = "[";
+	$('input[type=checkbox]').each(function () {
+		sList +=  this.checked ? $(this).val() + "," : "";
+	});
+	sList += "]";
+
+	$.ajax({
+		url: "/saveSelectedDiscs",
+		type: "POST",
+		data: sList,
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(){
+			callback();
+		}
+	});
 }
 
 function initSelectTags(category, organisation)
@@ -115,6 +161,7 @@ function addVM()
 	if(!validator("name", "Empty"))
 		return;
 
+	
 	var $form = $("#addVM");
 	var d = getFormData($form);
 	var s = JSON.stringify(d);
@@ -158,6 +205,18 @@ function findVM(name, callback)
 		{
 			foundVM = item;
 			callback(item.category, 0);
+		}		
+	});
+}
+
+function findVM_delete(name, callback)
+{
+	VMsReturned_delete.forEach(function(item)
+	{
+		if(name === item.name)
+		{
+			foundVM = item;
+			callback(item);
 		}		
 	});
 }
@@ -211,19 +270,19 @@ function fillDetailsVM(vm)
 
 function initDeleteVM(name)
 {
-	getVMs(name, findVM);	
+	getVMs(name, findVM_delete);	
 }
 
 function getVMs(name, callback)
 {
 	$.ajax({
-		url: "/getVM_Categories",
+		url: "/getVMs",
 		type: "GET",
 		contentType: "application/json",
 		dataType: "json",
 		complete: function(data)
 		{
-			VMsReturned = JSON.parse(data.responseText);
+			VMsReturned_delete = JSON.parse(data.responseText);
 			callback(name, removeVM);
 		}
 	});

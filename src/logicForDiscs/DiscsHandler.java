@@ -1,5 +1,6 @@
 package logicForDiscs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import beans.Disc;
@@ -11,7 +12,8 @@ public class DiscsHandler {
 		if(discs.containsKey(disc.getName()))
 			return false;
 		
-		vms.get(disc.getParentVM()).getDiscs().add(disc.getName());
+		if(vms.containsKey(disc.getParentVM()))
+			vms.get(disc.getParentVM()).getDiscs().add(disc.getName());
 		
 		discs.put(disc.getName(), disc);
 		return true;
@@ -30,8 +32,10 @@ public class DiscsHandler {
 
 	public static boolean editDisc(HashMap<String, Disc> discs, Disc[] discPair, HashMap<String, VirtualMachine> vms) 
 	{
-		vms.get(discPair[0].getParentVM()).getDiscs().remove(discPair[0].getName());
-		vms.get(discPair[1].getParentVM()).getDiscs().add(discPair[1].getName());
+		if(vms.containsKey(discPair[0].getParentVM()))
+			vms.get(discPair[0].getParentVM()).getDiscs().remove(discPair[0].getName());
+		if(vms.containsKey(discPair[1].getParentVM()))
+			vms.get(discPair[1].getParentVM()).getDiscs().add(discPair[1].getName());
 		
 		for (VirtualMachine value : vms.values()) {
 		    System.out.println(value);
@@ -41,5 +45,15 @@ public class DiscsHandler {
 		discs.put(discPair[1].getName(), discPair[1]);
 		
 		return true;
+	}
+
+	public static ArrayList<Disc> getFreeDiscs(HashMap<String, Disc> discs) {
+		ArrayList<Disc> freeDiscs = new ArrayList<Disc>();
+		
+		for(Disc d : discs.values())
+			if(d.getParentVM().equals(""))
+				freeDiscs.add(d);
+		
+		return freeDiscs;
 	}
 }
