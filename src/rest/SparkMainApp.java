@@ -2,7 +2,9 @@ package rest;
 
 import static spark.Spark.delete;
 import static spark.Spark.get;
+import static spark.Spark.halt;
 import static spark.Spark.after;
+import static spark.Spark.before;
 import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
@@ -22,7 +24,6 @@ import beans.VirtualMachineCategory;
 
 import dataFlow.ReadData;
 
-import controller.DataManipulation;
 import enums.Roles;
 import logicForDiscs.DiscsHandler;
 import logicForVM_Categories.VM_CategoriesHandler;
@@ -34,52 +35,25 @@ public class SparkMainApp {
 	private static Gson g = new Gson();
 
 	public static HashMap<String, User> users;
+	public static HashMap<String, VirtualMachine> vms;
+	public static HashMap<String, Disc> discs;
+	public static HashMap<String, VirtualMachineCategory> vmcs;
 	
 	public static void main(String[] args) throws Exception {
-		port(8083);
+		port(8080);
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
 		String fs = System.getProperty("file.separator");
-		//users = DataManipulation.ReadUsers("."+fs+"data"+fs+"users.txt");
+		//users = DataManipulation.readUsers("."+fs+"data"+fs+"users.txt");
 		users = new HashMap<String, User>();
+		vms = ReadData.readVMs();
+		discs = ReadData.readDiscs();
+		vmcs = ReadData.readVM_Categories();
 		
 		if (users.size() == 0)
 			users.put("admin@admin.com", new User("admin@admin.com", "admin", "admin", "admin", null, Roles.SUPERADMIN));
-
-		get("/initApp", (req, res) ->{
-			res.type("application/json");
-			
-			Session ss = req.session(true);
-			
-			HashMap<String, VirtualMachine> vms = ss.attribute("VMs");
-			if(vms == null)
-			{
-				vms = ReadData.readVMs();
-				ss.attribute("VMs", vms);
-			}
-			
-			HashMap<String, Disc> discs = ss.attribute("Discs");
-			if(discs == null)
-			{
-				discs = ReadData.readDiscs();
-				ss.attribute("Discs", discs);
-			}
-			
-			HashMap<String, VirtualMachineCategory> vmcs = ss.attribute("VMCategories");
-			if(vmcs == null)
-			{
-				vmcs = ReadData.readVM_Categories();
-				ss.attribute("VMCategories", vmcs);
-			}
-				
-			User u = ss.attribute("user");
-			
-			return g.toJson(u);
-		});
-		
-		
-		
+	
 		post("/rest/login", (req,res) -> {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
@@ -121,13 +95,6 @@ public class SparkMainApp {
 			}
 		});
 		
-		get("/preuzmiKorisnika", (req, res) -> {
-			res.type("application/json");
-			Session ss = req.session(true);
-			User u = ss.attribute("user");
-			return g.toJson(u);
-		});
-		
 		get("/rest/isLoggedIn", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);
@@ -137,6 +104,35 @@ public class SparkMainApp {
 				loggedIn = "false";
 				
 			return "{\"loggedIn\":" + loggedIn + "}";
+		});
+
+		get("/rest/goToUsers", (req, res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				halt(403, "Unauthorized operation!");
+			}
+			
+			return "{\"message\":false}";
+		});
+		
+		after("/rest/goToUsers", (req, res) -> {
+			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null && u.getRole() != Roles.CLIENT) {
+				res.redirect("/html/users.html", 301);
+			}
+		});
+		
+		get("/preuzmiKorisnika", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			return g.toJson(u);
 		});
 
 		post("/addVM_Category", (req, res) ->{

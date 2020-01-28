@@ -8,11 +8,47 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import beans.Disc;
+import beans.User;
 import beans.VirtualMachine;
 import beans.VirtualMachineCategory;
 import enums.DiskTypes;
+import enums.Roles;
 
 public class ReadData {
+	
+	public static HashMap<String, User> readUsers(String filePath)
+	{
+		HashMap<String, User> users = new HashMap<String, User>();
+		
+		BufferedReader br;
+
+		String line = "";
+		try {
+			br = new BufferedReader(new FileReader(filePath));
+			while((line = br.readLine()) != null)
+			{
+				User u = new User();
+				String[] parts = line.split("\\|");
+				u.setEmail(parts[0]);
+				u.setPassword(parts[1]);
+				u.setName(parts[2]);
+				u.setLastName(parts[3]);
+				u.setOrganizacija(parts[4]);
+				u.setRole(Roles.valueOf(parts[5]));
+				users.put(u.getEmail(), u);
+					
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return users;
+	}
+	
 	public static HashMap<String, Disc> readDiscs()
 	{
 		HashMap<String, Disc> discs = new HashMap<String, Disc>(); 
