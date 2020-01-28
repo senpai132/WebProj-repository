@@ -51,9 +51,12 @@ public class SparkMainApp {
 		discs = ReadData.readDiscs();
 		vmcs = ReadData.readVM_Categories();
 		
-		if (users.size() == 0)
-			users.put("admin@admin.com", new User("admin@admin.com", "admin", "admin", "admin", null, Roles.SUPERADMIN));
-	
+		if (users.size() == 0) {
+			users.put("s@s.com", new User("s@s.com", "s", "s", "s", null, Roles.SUPERADMIN));
+			users.put("c@c.com", new User("c@c.com", "c", "c", "c", null, Roles.CLIENT));
+			users.put("a@a.com", new User("a@a.com", "a", "a", "a", null, Roles.ADMIN));
+		}
+			
 		post("/rest/login", (req,res) -> {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
@@ -65,8 +68,7 @@ public class SparkMainApp {
 				Session ss = req.session(true);
 				User user = ss.attribute("user");
 				if (user == null) {
-					user = u;
-					ss.attribute("user", user);
+					ss.attribute("user", loaded);
 					message = "true";
 				}
 			}
@@ -107,6 +109,7 @@ public class SparkMainApp {
 		});
 
 		get("/rest/goToUsers", (req, res) -> {
+			res.type("application/json");
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
 			
@@ -118,7 +121,6 @@ public class SparkMainApp {
 		});
 		
 		after("/rest/goToUsers", (req, res) -> {
-			res.type("application/json");
 			
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
@@ -128,6 +130,36 @@ public class SparkMainApp {
 			}
 		});
 		
+		get("/rest/isAdmin", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String message = "true";
+			
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				message = "false";
+			}
+			
+			return "{\"message\":" + message + "}";
+		});
+		
+		get("/rest/getUsers", (req, res) -> {
+			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			String superadmin = u.getRole() == Roles.SUPERADMIN ? "true" : "false";
+			
+			ArrayList<User> curr = new ArrayList<User>();
+			for(User user : users.values()) {
+				curr.add(user);
+			}
+			
+			return "{\"superadmin\":" + superadmin + ", \"users\": " + g.toJson(curr) + "}";
+		});
+
 		get("/preuzmiKorisnika", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);

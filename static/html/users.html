@@ -2,18 +2,23 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>Home page</title>
+		<title>Users</title>
 		<script src = "../javaScript/jquery.min.js"></script>
-		<script src = "../javaScript/index.js"></script>
+		<script src = "../javaScript/users.js"></script>
 		<script>
 			$(document).ready( function() {
-				initApp();
+				initUsers();
 			});
 		</script>
 	</head>
 <body>
-	<!-- Ovde treba pregled VM -->
-	<a href="rest/logout">Odjava</a>
-	<a href="rest/goToUsers">Korisnici</a>
+	<table id="table_users" border="1">
+		<tr>
+			<th>Email</th>
+			<th>Ime</th>
+			<th>Prezime</th>
+			<th id="org_column">Organizacija</th>
+		</tr>
+	</table>
 </body>
 </html>
