@@ -1,6 +1,6 @@
 $(document).ready(function() {
 		initSelectTags("category", "organisation");
-		initFreeDisks();
+		initFreeDisks("#freeDiscs");
 	});
 
 function getFormData($form)
@@ -15,7 +15,7 @@ function getFormData($form)
 	return indexed_array;
 }
 
-function initFreeDisks()
+function initFreeDisks(id)
 {
 	$.ajax({
 		url: "/getFreeDiscs",
@@ -25,9 +25,9 @@ function initFreeDisks()
 		complete: function(data)
 		{
 			freeDiscs = JSON.parse(data.responseText);
-			$("#freeDiscs").html("");
+			$(id).html("");
 			freeDiscs.forEach(function(item){
-				$("#freeDiscs").append(
+				$(id).append(
 					"<tr>" +
 					"<td>"+item.name+"</td>" +
 					"<td>"+item.type+"</td>" +
@@ -47,7 +47,7 @@ function saveSelectedDiscs(callback)
 		sList +=  this.checked ? $(this).val() + "," : "";
 	});
 	sList += "]";
-
+	alert(sList);
 	$.ajax({
 		url: "/saveSelectedDiscs",
 		type: "POST",
@@ -56,6 +56,29 @@ function saveSelectedDiscs(callback)
 		dataType: "json",
 		complete: function(){
 			callback();
+		}
+	});
+}
+
+function editVM()
+{
+	var $form = $("#detailsVM");
+	var d = getFormData($form);
+
+	pairOfVM = [foundVM, d];
+
+	var s = JSON.stringify(pairOfVM);
+
+	$.ajax({
+		url: "/editVM",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete: function()
+		{
+			alert("VM edited successfully");
+			listVMs();
 		}
 	});
 }
@@ -138,6 +161,7 @@ function listVMs()
 function initDetailsVM(name)
 {
 	initSelectTags("categoryDetails", "organisationDetails");
+	initFreeDisks("#freeDiscsEdit");
 	getVMDetails(name, findVM);
 }
 
@@ -161,11 +185,12 @@ function addVM()
 	if(!validator("name", "Empty"))
 		return;
 
+	//saveSelectedDiscs();
 	
 	var $form = $("#addVM");
 	var d = getFormData($form);
 	var s = JSON.stringify(d);
-
+	
 	$.ajax({
 		url: "/addVM",
 		type: "POST",
@@ -239,10 +264,38 @@ function findVM_Category(category, ind)
 						fillDetailsVM(foundVM);
 					}
 					fillDetailsVMC(item);
+					fillActiveDiscs(foundVM);
 				}
 					
 			});
 		}
+	});
+}
+
+function fillActiveDiscs(foundVM)
+{
+	s = JSON.stringify(foundVM);
+	$.ajax({
+		url: "/getActiveDiscs",
+		type: "POST",
+		contentType: "application/json",
+		dataType: "json",
+		data: s,
+		complete: function(data)
+		{
+			discsReturned = JSON.parse(data.responseText);
+			discsReturned.forEach(function(item){
+				$("#freeDiscsEdit").append(
+					"<tr>" +
+					"<td>"+item.name+"</td>" +
+					"<td>"+item.type+"</td>" +
+					"<td>"+item.capacity+"</td>" +
+					"<td><input type=\"checkbox\" name = \""+item.name+"\" value = \""+item.name+"\" checked></td>" + 
+					"</tr>"
+				);
+			});		
+		}
+
 	});
 }
 

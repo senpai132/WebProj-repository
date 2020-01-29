@@ -16,6 +16,8 @@ public class DiscsHandler {
 			vms.get(disc.getParentVM()).getDiscs().add(disc.getName());
 		
 		discs.put(disc.getName(), disc);
+		for(Disc m : discs.values())
+			System.out.println(m);
 		return true;
 	}
 	
@@ -27,11 +29,16 @@ public class DiscsHandler {
 		vms.get(disc.getParentVM()).getDiscs().remove(disc.getName());
 		
 		discs.remove(disc.getName());
+		for(Disc m : discs.values())
+			System.out.println(m);
 		return true;
 	}
 
 	public static boolean editDisc(HashMap<String, Disc> discs, Disc[] discPair, HashMap<String, VirtualMachine> vms) 
 	{
+		if(discs.containsKey(discPair[1].getName()) && discPair[0].getName().equals(discPair[1].getName()) == false)
+			return false;
+		
 		if(vms.containsKey(discPair[0].getParentVM()))
 			vms.get(discPair[0].getParentVM()).getDiscs().remove(discPair[0].getName());
 		if(vms.containsKey(discPair[1].getParentVM()))
@@ -43,7 +50,8 @@ public class DiscsHandler {
 		
 		discs.remove(discPair[0].getName());
 		discs.put(discPair[1].getName(), discPair[1]);
-		
+		for(Disc m : discs.values())
+			System.out.println(m);
 		return true;
 	}
 

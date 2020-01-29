@@ -40,7 +40,7 @@ public class SparkMainApp {
 	public static HashMap<String, VirtualMachineCategory> vmcs;
 	
 	public static void main(String[] args) throws Exception {
-		port(8084);
+		port(8080);
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
@@ -193,14 +193,14 @@ public class SparkMainApp {
 		delete("/DeleteVM_Category", (req, res) -> {
 			VirtualMachineCategory vmc = g.fromJson(req.body(), VirtualMachineCategory.class);
 			
-			return VM_CategoriesHandler.deleteVM_Category(vmcs, vmc);
+			return VM_CategoriesHandler.deleteVM_Category(vmcs, vmc, vms);
 		});
 		
 		post("/EditVM_Category", (req, res) -> {
 			res.type("application/json");
 			VirtualMachineCategory[] VMC_Pair = g.fromJson(req.body(), VirtualMachineCategory[].class);
 			
-			return VM_CategoriesHandler.editVM_Category(vmcs, VMC_Pair);
+			return VM_CategoriesHandler.editVM_Category(vmcs, VMC_Pair, vms);
 		});
 		
 		post("/addDisc", (req, res) ->{
@@ -274,6 +274,22 @@ public class SparkMainApp {
 			ss.attribute("selectedDiscs", selectedDiscs);
 			
 			return true;
+		});
+		
+		post("/getActiveDiscs", (req, res) ->{
+			res.type("application/json");
+			VirtualMachine vm = g.fromJson(req.body(), VirtualMachine.class);
+			
+			return g.toJson(VirtualMachineHandler.getActiveDiscs(discs, vm, vms));
+		});
+		
+		post("/editVM", (req, res) ->{
+			res.type("application/json");
+			VirtualMachine[] vmPair = g.fromJson(req.body(), VirtualMachine[].class);
+			Session ss = req.session(true);
+			String[] selectedDiscs = ss.attribute("selectedDiscs");
+			
+			return VirtualMachineHandler.editVM(vms, vmPair, discs, selectedDiscs);
 		});
 	
 	}
