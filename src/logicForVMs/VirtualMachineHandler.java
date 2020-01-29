@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import beans.Disc;
+import beans.VM_Filter;
 import beans.VirtualMachine;
+import beans.VirtualMachineCategory;
 
 public class VirtualMachineHandler {
 
@@ -78,6 +80,37 @@ public class VirtualMachineHandler {
 		vms.put(vmPair[1].getName(), vmPair[1]);
 		
 		return true;
+	}
+	
+	public static ArrayList<VirtualMachine> getFilteredVMs(HashMap<String, VirtualMachine> vms, VM_Filter filter, HashMap<String, VirtualMachineCategory> vmcs) {
+		ArrayList<VirtualMachine> vmsFiltered = new ArrayList<VirtualMachine>();
+		System.out.println("Usao");
+		if(vms.containsKey(filter.getName()))
+		{
+			System.out.println("Nasao po imenu");
+			vmsFiltered.add(vms.get(filter.getName()));
+			return vmsFiltered;
+		}
+		
+		for(VirtualMachine vm : vms.values())
+		{
+			int numberOfCores = vmcs.get(vm.getCategory()).getNumberOfCores();
+			int maxCores = filter.getCores().get(1);
+			int minCores = filter.getCores().get(0);
+			
+			int RAM = vmcs.get(vm.getCategory()).getGbOfRAM();
+			int maxRam = filter.getRam().get(1);
+			int minRam = filter.getRam().get(0);
+			
+			int GPU = vmcs.get(vm.getCategory()).getNumberOfGPUCores();
+			int maxGPU = filter.getGpu().get(1);
+			int minGPU = filter.getGpu().get(0);
+			
+			if(numberOfCores >= minCores && RAM >= minRam && GPU >= minGPU && numberOfCores <= maxCores && RAM <= maxRam && GPU <= maxGPU)
+				vmsFiltered.add(vm);
+		}
+		
+		return vmsFiltered;
 	}
 
 }

@@ -1,5 +1,6 @@
 package logicForVM_Categories;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import beans.VirtualMachine;
@@ -43,5 +44,27 @@ public class VM_CategoriesHandler {
 		VM_Categories.put(VMC_Pair[1].getName(), VMC_Pair[1]);
 		
 		return true;		
+	}
+	
+	public static ArrayList<Integer> getMaxCores(HashMap<String, VirtualMachineCategory> vmcs)
+	{
+		ArrayList<Integer> maxCores = new ArrayList<Integer>();
+		Integer maxC = 0;
+		Integer maxRAM = 0;
+		Integer maxGPU = 0;
+		
+		for(VirtualMachineCategory vmc : vmcs.values())
+		{
+			if(vmc.getNumberOfCores() > maxC)
+				maxC = vmc.getNumberOfCores();
+			if(vmc.getGbOfRAM() > maxRAM)
+				maxRAM = vmc.getGbOfRAM();
+			if(vmc.getNumberOfGPUCores() > maxGPU)
+				maxGPU = vmc.getNumberOfGPUCores();
+		}
+		maxCores.add(maxC);
+		maxCores.add(maxRAM);
+		maxCores.add(maxGPU);
+		return maxCores;
 	}
 }
