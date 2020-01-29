@@ -340,3 +340,141 @@ function getVMs(name, callback)
 		}
 	});
 }
+
+function validateIntInput(id)
+{
+	$("#"+id+"Error").html("");
+
+	if(document.getElementById(id+"").value >>> 0 === parseFloat(document.getElementById(id+"").value) == false)
+	{
+		$("#"+id+"Error").html("<font color=\"red\">This field must be a positive integer</font>");
+		return false;
+	}
+	return true;
+}
+
+function validateIntFilter(id, varName)
+{
+	if(document.getElementById(id).value != "")
+	{
+		if(validateIntInput(id)==true)
+		{
+			varName = parseFloat(document.getElementById(id).value);
+			return true;
+		}
+			
+		else
+			return false;
+	}
+	else
+		varName = 0;
+
+	return true;
+}
+
+function getFilterFormData()
+{
+	$("#minRAMError").html("");
+	$("#minGPUError").html("");
+	$("#minCoresError").html("");
+	filterName = document.getElementById("findVMName").value;
+
+	minCores = 0;
+	maxCores = 0;
+	minRAM = 0;
+	maxRAM = 0;
+	minGPU = 0;
+	maxGPU = 0;
+	ind = true;
+
+	if(validateIntFilter("minCores", minCores)==false)
+		return false;
+	else
+		minCores = document.getElementById("minCores").value =="" ? 0: parseFloat(document.getElementById("minCores").value);
+	
+	if(validateIntFilter("maxCores", maxCores)==false)
+		return false;
+	else
+		maxCores = document.getElementById("maxCores").value =="" ? 1000:parseFloat(document.getElementById("maxCores").value);
+
+	if(validateIntFilter("minRAM", minRAM)==false)
+		return false;
+	else
+		minRAM = document.getElementById("minRAM").value =="" ? 0:parseFloat(document.getElementById("minRAM").value);
+
+	if(validateIntFilter("maxRAM", maxRAM)==false)
+		return false;
+	else
+		maxRAM = document.getElementById("maxRAM").value =="" ? 1000:parseFloat(document.getElementById("maxRAM").value);
+
+	if(validateIntFilter("minGPU", minGPU)==false)
+		return false;
+	else
+		minGPU = document.getElementById("minGPU").value =="" ? 0:parseFloat(document.getElementById("minGPU").value);
+
+	if(validateIntFilter("maxGPU", maxGPU)==false)
+		return false;
+	else
+		maxGPU = document.getElementById("maxGPU").value =="" ? 1000:parseFloat(document.getElementById("maxGPU").value);
+	
+	if(document.getElementById("minRAM").value >>> maxRAM)
+	{
+		$("#minRAMError").html("<font color=\"red\">Max must be greater or equal to Min</font>");
+		ind = false;
+	}
+		
+	if(document.getElementById("minCores").value >>> maxCores)
+	{
+		$("#minCoresError").html("<font color=\"red\">Max must be greater or equal to Min</font>");
+		ind = false;
+	}
+
+	if(document.getElementById("minGPU").value >>> maxGPU)
+	{
+		$("#minGPUError").html("<font color=\"red\">Max must be greater or equal to Min</font>");
+		ind = false;
+	}
+		
+	return ind;
+}
+
+function filterVMs()
+{
+	if(getFilterFormData() == false)
+		return;
+
+	var cores1 = [minCores, maxCores];
+	var ram1 = [minRAM, maxRAM];
+	var gpu1 = [minGPU, maxGPU];
+	
+	var d = {
+		name: filterName,
+		cores: cores1,
+		ram: ram1,
+		gpu: gpu1
+	};
+	var s = JSON.stringify(d);
+
+	$.ajax({
+		url: "/filterVMs",
+		type: "POST",
+		contentType: "application/json",
+		dataType: "json",
+		data: s,
+		complete: function(data){
+			var vms = JSON.parse(data.responseText);
+			$("#filteredVMs").html("");
+			vms.forEach(function(item, indeks){
+				$("#filteredVMs").append(
+					"<tr>" +
+					"<td>"+item.name+"</td>" +
+					"<td>"+item.organisation+"</td>" +
+					"<td>"+item.category+"</td>" +
+					"<td><a onclick = \"initDeleteVM('"+item.name+"')\">Delete</a></td>" + 
+					"<td><a onclick = \"initDetailsVM('" + item.name + "')\">Edit</a></td>" + 
+					"</tr>"
+				);
+			});
+		}
+	});
+}

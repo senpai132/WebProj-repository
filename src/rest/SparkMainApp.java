@@ -1,18 +1,17 @@
 package rest;
 
+import static spark.Spark.after;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.halt;
-import static spark.Spark.after;
-import static spark.Spark.before;
 import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
@@ -20,11 +19,10 @@ import com.google.gson.Gson;
 
 import beans.Disc;
 import beans.User;
+import beans.VM_Filter;
 import beans.VirtualMachine;
 import beans.VirtualMachineCategory;
-
 import dataFlow.ReadData;
-
 import enums.Roles;
 import logicForDiscs.DiscsHandler;
 import logicForVM_Categories.VM_CategoriesHandler;
@@ -366,7 +364,18 @@ public class SparkMainApp {
 			
 			return VirtualMachineHandler.editVM(vms, vmPair, discs, selectedDiscs);
 		});
+		
+		get("/initVM_Sliders", (req, res)->{
+			res.type("application/json");
+			return VM_CategoriesHandler.getMaxCores(vmcs);
+		});
 	
+		post("/filterVMs", (req, res)->{
+			res.type("application/json");
+			VM_Filter vmf = g.fromJson(req.body(), VM_Filter.class);
+			
+			return (g.toJson(VirtualMachineHandler.getFilteredVMs(vms, vmf, vmcs)));
+		});
 	}
 	
 	public static boolean checkEmail(String email) {

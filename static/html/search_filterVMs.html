@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<script src="../javaScript/jquery.min.js"></script>
+		<script src="../javaScript/VirtualMachine.js"></script>
+	</head>
+	<body>
+		<form>
+			<table border = "1">
+				<tr>
+					<td>Name:</td>
+					<td><input type="text" name="findVMName" id="findVMName"></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td rowspan = "2">Number of Cores</td>
+					<td>Min</td>
+					<td><input type = "text" name = "minCores" id="minCores"></td>
+					<td><p id="minCoresError"></p></td>
+				</tr>
+				<tr>
+					<td>Max</td>
+					<td><input type = "text" name = "maxCores" id="maxCores"></td>
+					<td><p id="maxCoresError"></p></td>
+				</tr>
+				<tr>
+					<td rowspan = "2">Gbs of RAM</td>
+					<td>Min</td>
+					<td><input type = "text" name = "minRAM" id="minRAM"></td>
+					<td><p id="minRAMError"></p></td>
+				</tr>
+				<tr>
+					<td>Max</td>
+					<td><input type = "text" name = "maxRAM" id="maxRAM"></td>
+					<td><p id="maxRAMError"></p></td>
+				</tr>
+				<tr>
+					<td rowspan = "2">Number of GPU Cores</td>
+					<td>Min</td>
+					<td><input type = "text" name = "minGPU" id="minGPU"></td>
+					<td><p id="minGPUError"></p></td>
+				</tr>
+				<tr>
+					<td>Max</td>
+					<td><input type = "text" name = "maxGPU" id="maxGPU"></td>
+					<td><p id="maxGPUError"></p></td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="button" value="Filter" onclick= "filterVMs()">
+					</td>
+				</tr>
+			</table>
+		</form>
+
+		<table id ="filteredVMs">
+
+		</table>
+	</body>
+</html>
