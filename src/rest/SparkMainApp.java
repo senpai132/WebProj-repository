@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import com.google.gson.Gson;
 
 import beans.Disc;
+import beans.Organization;
 import beans.User;
 import beans.VM_Filter;
 import beans.VirtualMachine;
@@ -36,6 +37,7 @@ public class SparkMainApp {
 	public static HashMap<String, VirtualMachine> vms;
 	public static HashMap<String, Disc> discs;
 	public static HashMap<String, VirtualMachineCategory> vmcs;
+	public static HashMap<String, Organization> orgs;
 	
 	public static void main(String[] args) throws Exception {
 		port(8080);
@@ -44,6 +46,7 @@ public class SparkMainApp {
 		
 		//String fs = System.getProperty("file.separator");
 		//users = DataManipulation.readUsers("."+fs+"data"+fs+"users.txt");
+		orgs = new HashMap<String, Organization>();
 		users = new HashMap<String, User>();
 		vms = ReadData.readVMs();
 		discs = ReadData.readDiscs();
@@ -54,6 +57,10 @@ public class SparkMainApp {
 			users.put("c@c.com", new User("c@c.com", "c", "c", "c", null, Roles.CLIENT));
 			users.put("a@a.com", new User("a@a.com", "a", "a", "a", null, Roles.ADMIN));
 		}
+		
+		orgs.put("ime1", new Organization("ime1", "opis1", "logo1"));
+		orgs.put("ime2", new Organization("ime2", "opis2", "logo2"));
+		orgs.put("ime3", new Organization("ime3", "opis3", "logo3"));
 			
 		post("/rest/login", (req,res) -> {
 			String payload = req.body();
@@ -248,6 +255,18 @@ public class SparkMainApp {
 			if (u != null && u.getRole() == Roles.SUPERADMIN) {
 				res.redirect("/html/organizations.html", 301);
 			}
+		});
+		
+		get("/rest/getOrganizations", (req, res) -> {
+			res.type("application/json");
+			
+			ArrayList<Organization> curr = new ArrayList<Organization>();
+			
+			for (Organization org : orgs.values()) {
+				curr.add(org);
+			}
+			
+			return g.toJson(curr);
 		});
 		
 		get("/preuzmiKorisnika", (req, res) -> {

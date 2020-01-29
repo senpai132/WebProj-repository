@@ -2,23 +2,31 @@ package beans;
 
 import java.util.ArrayList;
 
-public class Organisation {
+public class Organization {
 	private String name;
+	private String description;
 	private String logo;
 	private ArrayList<String> users;
 	private ArrayList<String> resources;
 	
-	public Organisation()
+	public Organization()
 	{
 		
 	}
 
-	public Organisation(String name, String logo, ArrayList<String> users, ArrayList<String> resources) {
+	public Organization(String name, String description, String logo) {
 		super();
 		this.name = name;
+		this.description = description;
 		this.logo = logo;
-		this.users = users;
-		this.resources = resources;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getName() {

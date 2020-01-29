@@ -8,7 +8,23 @@ function init() {
 				window.location.replace("/");
 			}
 			else {
-				//TODO ovde ide dalje ucitavanje
+				loadOrganizations();
+			}
+		}
+	});
+}
+
+function loadOrganizations() {
+	$.ajax({
+		url: "/rest/getOrganizations",
+		type: "GET",
+		complete: function(data){
+			orgs = JSON.parse(data.responseText);
+			
+			var table = $("#table_organizations");
+			
+			for(let org of orgs) {
+				table.append(`<tr><td>${org.name}</td><td>${org.description}</td><td><img src="${org.logo}"/></td></tr>`);
 			}
 		}
 	});
