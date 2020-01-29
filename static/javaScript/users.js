@@ -8,18 +8,17 @@ function initUsers() {
 				window.location.replace("/");
 			}
 			else {
-				loadRacuni();
+				loadUsers();
 			}
 		}
 	});
 }
 
-function loadRacuni() {
+function loadUsers() {
 	$.ajax({
 		url: "/rest/getUsers",
 		type: "GET",
 		complete: function(data){
-			console.log(data.responseText);
 			d = JSON.parse(data.responseText);
 			
 			var superAdmin = d.superadmin;

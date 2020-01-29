@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 
@@ -60,20 +61,32 @@ public class SparkMainApp {
 		post("/rest/login", (req,res) -> {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
-			String message = "false";
+			String result = "false";
+			String message = "";
 			
-			User loaded = users.get(u.getEmail());
-			
-			if (loaded != null && loaded.getPassword().equals(u.getPassword())) {
-				Session ss = req.session(true);
-				User user = ss.attribute("user");
-				if (user == null) {
-					ss.attribute("user", loaded);
-					message = "true";
+			if (!checkEmail(u.getEmail())) {
+				message = "\"Invalid email\"";
+			}
+			else if (u.getPassword() == null || u.getPassword().isEmpty()) {
+				message = "\"Password cannot be empty\"";
+			}
+			else {
+				User loaded = users.get(u.getEmail());
+				
+				if (loaded != null && loaded.getPassword().equals(u.getPassword())) {
+					Session ss = req.session(true);
+					User user = ss.attribute("user");
+					if (user == null) {
+						ss.attribute("user", loaded);
+						result = "true";
+					}
+				}
+				else {
+					message = "\"Invalid email or password\"";
 				}
 			}
-			
-			return "{\"message\": " + message + "}";
+
+			return "{\"result\": " + result + ", \"message\": " + message + "}";
 		});
 		
 		get("/rest/logout", (req, res) -> {
@@ -85,7 +98,7 @@ public class SparkMainApp {
 				ss.invalidate();
 			}
 
-			return "{\"message\": true}";
+			return "{\"result\": true}";
 		});
 		
 		after("/rest/logout", (req, res) -> {
@@ -101,11 +114,12 @@ public class SparkMainApp {
 			res.type("application/json");
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
-			String loggedIn = "true";
+			
+			String result = "true";
 			if (u == null)
-				loggedIn = "false";
+				result = "false";
 				
-			return "{\"loggedIn\":" + loggedIn + "}";
+			return "{\"result\":" + result + "}";
 		});
 
 		get("/rest/goToUsers", (req, res) -> {
@@ -134,14 +148,21 @@ public class SparkMainApp {
 			res.type("application/json");
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
-			String message = "true";
-			
-			
+			String message = null;
+
 			if (u == null || u.getRole() == Roles.CLIENT) {
-				message = "false";
+				message = "{\"message\": false}";
+			}
+			else {
+				if (u.getRole() == Roles.SUPERADMIN) {
+					message = "{\"message\": true, \"super\": true}";
+				}
+				else {
+					message = "{\"message\": true, \"super\": false}";
+				}
 			}
 			
-			return "{\"message\":" + message + "}";
+			return message;
 		});
 		
 		get("/rest/getUsers", (req, res) -> {
@@ -159,7 +180,61 @@ public class SparkMainApp {
 			
 			return "{\"superadmin\":" + superadmin + ", \"users\": " + g.toJson(curr) + "}";
 		});
+		
+		get("/rest/goToNewUser", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				halt(403, "Unauthorized operation!");
+			}
+			
+			return "{\"message\":false}";
+		});
+		
+		after("/rest/goToNewUser", (req, res) -> {
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null && u.getRole() != Roles.CLIENT) {
+				res.redirect("/html/new_user.html", 301);
+			}
+		});
+		
+		post("/rest/newUser", (req,res) -> {
+			String payload = req.body();
+			User u = g.fromJson(payload, User.class);
+			String result = "false";
+			String message = "";
+			
+			Session ss = req.session(true);
+			User logged = ss.attribute("user");
+			
+			if (!checkEmail(u.getEmail()) || u.getPassword() == null || u.getPassword().isEmpty() || u.getName() == null || u.getName().isEmpty() || u.getLastName() == null || u.getLastName().isEmpty()) {
+				result = "false";
+				message = "Bad input!";
+			}
+			else if (logged.getRole() == Roles.ADMIN && u.getRole() == null) {
+				result = "false";
+				message = "Organisation is reqired";
+			}
+			else {
+				if (users.containsKey(u.getEmail())) {
+					result = "false";
+					message = "Email already in use";
+				}
+				else {
+					users.put(u.getEmail(), u);
+					
+					result = "true";
+				}
+			}
 
+			return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
 		get("/preuzmiKorisnika", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);
@@ -292,6 +367,19 @@ public class SparkMainApp {
 			return VirtualMachineHandler.editVM(vms, vmPair, discs, selectedDiscs);
 		});
 	
+	}
+	
+	public static boolean checkEmail(String email) {
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+                "[a-zA-Z0-9_+&*-]+)*@" + 
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+                "A-Z]{2,7}$"; 
+                  
+		Pattern pat = Pattern.compile(emailRegex); 
+		if (email == null) 
+			return false; 
+		
+		return pat.matcher(email).matches(); 
 	}
 
 }

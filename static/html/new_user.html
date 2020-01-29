@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Users</title>
+		<script src = "../javaScript/jquery.min.js"></script>
+		<script src = "../javaScript/new_user.js"></script>
+		<script>
+			$(document).ready( function() {
+				init();
+			});
+		</script>
+	</head>
+	<body>
+		<form id = "new_user_form">
+		<table>
+			<tr>
+				<td>Email:</td>
+				<td><input type ="text" name = "email" id="email"></td>
+				<td><p id = "mailError"></p></td>
+			</tr>
+			<tr>
+				<td>Password</td>
+				<td><input type = "password" name="password" id="password"></td>
+				<td><p id = "passError"></p></td>
+			</tr>
+			<tr>
+				<td>Ime</td>
+				<td><input type = "text" name="name" id="name"></td>
+				<td><p id = "nameError"></p></td>
+			</tr>
+			<tr>
+				<td>Prezime</td>
+				<td><input type = "text" name="lastName" id="lastName"></td>
+				<td><p id = "lastNameError"></p></td>
+			</tr>
+			<tr id="org_input">
+				<td>Organizacija</td>
+				<td><input type = "text" name="organizacija" id="organizacija"></td>
+				<td><p id = "organizacijaError"></p></td>
+			</tr>
+			<tr>
+				<td>Tip korisnika</td>
+				<td><select name="role">
+							<option value="ADMIN">Admin</option>
+							<option value="CLIENT">Klijent</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td align = "center" colspan = "3"><input type = "button" value = "Dodaj" onclick = "addUser()"></td>
+			</tr>
+		</table>
+		<p id = "invalidLogIn"></p>
+	</form>
+	</body>
+</html>

@@ -7,7 +7,7 @@ public class User {
 	private String password;
 	private String name;
 	private String lastName;
-	private String organizacija;
+	private String organization;
 	private Roles role;
 	
 	public User()
@@ -15,13 +15,13 @@ public class User {
 		
 	}
 
-	public User(String email, String password, String name, String lastName, String organizacija, Roles role) {
+	public User(String email, String password, String name, String lastName, String organization, Roles role) {
 		super();
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.lastName = lastName;
-		this.organizacija = organizacija;
+		this.organization = organization;
 		this.role = role;
 	}
 
@@ -58,11 +58,11 @@ public class User {
 	}
 
 	public String getOrganizacija() {
-		return organizacija;
+		return organization;
 	}
 
 	public void setOrganizacija(String organizacija) {
-		this.organizacija = organizacija;
+		this.organization = organizacija;
 	}
 
 	public Roles getRole() {

@@ -12,20 +12,21 @@ function getFormData($form){
 function login() {
 	if(!validateEmail(document.getElementById("email").value))
 	{
-		$("#mailError").html("<font color = \"red\">* Invalid email format</font>");
+		$("#email_error").html("<font color = \"red\">* Invalid email format</font>");
 		return;
 	}
-	$("#mailError").html("");
+	$("#email_error").html("");
 
-	if(checkPassword())
+	if(document.getElementById("password").value == "")
 	{
-		$("#passError").html("<font color = \"red\">* This field is required</font>");
+		$("#password_error").html("<font color = \"red\">* This field is required</font>");
 		return;
 	}
-	$("#passError").html("");
+	$("#password_error").html("");
 
-	var $form = $("#login");
+	var $form = $("#login_form");
 	var data = getFormData($form);
+
 	var s = JSON.stringify(data);
 	$.ajax({
 		url: "/rest/login",
@@ -35,32 +36,30 @@ function login() {
 		dataType:"json",
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
-			if(!d.message)
+
+			if(!d.result)
 			{
-				$("#invalidLogIn").html("Invalid email or password");
+				$("#error_message").html(d.message);
 			}
-			else 
+			else {
 				window.location.replace("/");
+			}
 		}
 	});
 }
 
-function isLoggedIn() {
+function init() {
 	$.ajax({
-		url: "../rest/isLoggedIn",
+		url: "/rest/isLoggedIn",
 		type: "GET",
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
-			console.log(d)
-			if(d.loggedIn) {
+
+			if(d.result) {
 				window.location.replace("/");
 			}
 		}
 	});
-}
-
-function checkPassword() {
-	return document.getElementById("password").value === "";
 }
 
 function validateEmail(email) {

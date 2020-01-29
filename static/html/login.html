@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -7,28 +7,28 @@
 		<script src = "../javaScript/login.js"></script>
 		<script>
 			$(document).ready( function() {
-				isLoggedIn();
+				init();
 			});
 		</script>
 	</head>
 <body>
-	<form id = "login">
+	<form id ="login_form">
 		<table>
 			<tr>
 				<td>Email:</td>
-				<td><input id = "email" type = "email" name = "email"></td>
-				<td><p id = "mailError"></p></td>
+				<td><input id="email" type="text" name="email"></td>
+				<td><p id ="email_error"></p></td>
 			</tr>
 			<tr>
 				<td>Password</td>
-				<td><input type = "password" name = "password" id = "password"></td>
-				<td><p id = "passError"></p></td>
+				<td><input type="password" name="password" id="password"></td>
+				<td><p id="password_error"></p></td>
 			</tr>
 			<tr>
-				<td align = "center" colspan = "3"><input type = "button" value = "Log in" onclick = "login()"></td>
+				<td align="center" colspan="3"><input type="button" value="Log in" onclick="login()"></td>
 			</tr>
 		</table>
-		<p id = "invalidLogIn"></p>
+		<p id ="error_message"></p>
 	</form>
 </body>
 </html>
