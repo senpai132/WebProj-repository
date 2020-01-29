@@ -50,12 +50,12 @@ function login() {
 
 function init() {
 	$.ajax({
-		url: "/rest/isLoggedIn",
+		url: "/rest/getUserType",
 		type: "GET",
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
 
-			if(d.result) {
+			if(d.logged) {
 				window.location.replace("/");
 			}
 		}

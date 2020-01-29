@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
@@ -43,7 +42,7 @@ public class SparkMainApp {
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
-		String fs = System.getProperty("file.separator");
+		//String fs = System.getProperty("file.separator");
 		//users = DataManipulation.readUsers("."+fs+"data"+fs+"users.txt");
 		users = new HashMap<String, User>();
 		vms = ReadData.readVMs();
@@ -60,7 +59,7 @@ public class SparkMainApp {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
 			String result = "false";
-			String message = "";
+			String message = "\"Valid\"";
 			
 			if (!checkEmail(u.getEmail())) {
 				message = "\"Invalid email\"";
@@ -107,18 +106,6 @@ public class SparkMainApp {
 				res.redirect("/html/login.html", 301);
 			}
 		});
-		
-		get("/rest/isLoggedIn", (req, res) -> {
-			res.type("application/json");
-			Session ss = req.session(true);
-			User u = ss.attribute("user");
-			
-			String result = "true";
-			if (u == null)
-				result = "false";
-				
-			return "{\"result\":" + result + "}";
-		});
 
 		get("/rest/goToUsers", (req, res) -> {
 			res.type("application/json");
@@ -142,25 +129,33 @@ public class SparkMainApp {
 			}
 		});
 		
-		get("/rest/isAdmin", (req, res) -> {
+		get("/rest/getUserType", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
-			String message = null;
-
-			if (u == null || u.getRole() == Roles.CLIENT) {
-				message = "{\"message\": false}";
-			}
-			else {
-				if (u.getRole() == Roles.SUPERADMIN) {
-					message = "{\"message\": true, \"super\": true}";
-				}
-				else {
-					message = "{\"message\": true, \"super\": false}";
+			String logged = "false";
+			String client = "false";
+			String admin = "false";
+			String superAdmin = "false";
+				
+			if (u != null) {
+				logged = "true";
+				switch(u.getRole()) {
+					case SUPERADMIN:
+						superAdmin = "true";
+						break;
+						
+					case ADMIN:
+						admin = "true";
+						break;
+						
+					case CLIENT:
+						client = "true";
+						break;
 				}
 			}
 			
-			return message;
+			return "{\"logged\": " + logged + ", \"client\": " + client + ", \"admin\": " + admin + ", \"superadmin\": " + superAdmin + "}";
 		});
 		
 		get("/rest/getUsers", (req, res) -> {
@@ -231,6 +226,28 @@ public class SparkMainApp {
 			}
 
 			return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
+		get("/rest/goToOrganizations", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || u.getRole() != Roles.SUPERADMIN) {
+				halt(403, "Unauthorized operation!");
+			}
+			
+			return "{\"result\":false}";
+		});
+		
+		after("/rest/goToOrganizations", (req, res) -> {
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null && u.getRole() == Roles.SUPERADMIN) {
+				res.redirect("/html/organizations.html", 301);
+			}
 		});
 		
 		get("/preuzmiKorisnika", (req, res) -> {
