@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Users</title>
+		<script src = "../javaScript/jquery.min.js"></script>
+		<script src = "../javaScript/new_organization.js"></script>
+	</head>
+<body>
+	<form id ="organization_form">
+		<table>
+			<tr>
+				<td>Ime:</td>
+				<td><input id="name" type="text" name="name"></td>
+				<td><p id ="name_error"></p></td>
+			</tr>
+			<tr>
+				<td>Opis</td>
+				<td><input type="text" name="description" id="description"></td>
+				<td><p id="description_error"></p></td>
+			</tr>
+			<tr>
+				<td>Logo</td>
+				<td><input type="file" name="logo" id="logo" accept="image/*"></td>
+			</tr>
+			<tr>
+				<td align="center" colspan="3"><input type="submit" value="Dodaj"></td>
+			</tr>
+		</table>
+		<p id ="error_message"></p>
+	</form>
+</body>
+</html>

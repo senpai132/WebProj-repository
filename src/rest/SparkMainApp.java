@@ -269,6 +269,52 @@ public class SparkMainApp {
 			return g.toJson(curr);
 		});
 		
+		get("/rest/goToNewOrganization", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || u.getRole() != Roles.SUPERADMIN) {
+				halt(403, "Unauthorized operation!");
+			}
+			
+			return "{\"result\":false}";
+		});
+		
+		after("/rest/goToNewOrganization", (req, res) -> {
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null && u.getRole() == Roles.SUPERADMIN) {
+				res.redirect("/html/new_organization.html", 301);
+			}
+		});
+		
+		post("/rest/addOrganization", (req,res) -> {
+			String payload = req.body();
+			Organization o = g.fromJson(payload, Organization.class);
+			String result = "false";
+			String message = "";
+			
+			Session ss = req.session(true);
+			User logged = ss.attribute("user");
+			
+			/*
+			 * if (!checkEmail(u.getEmail()) || u.getPassword() == null ||
+			 * u.getPassword().isEmpty() || u.getName() == null || u.getName().isEmpty() ||
+			 * u.getLastName() == null || u.getLastName().isEmpty()) { result = "false";
+			 * message = "Bad input!"; } else if (logged.getRole() == Roles.ADMIN &&
+			 * u.getRole() == null) { result = "false"; message = "Organisation is reqired";
+			 * } else { if (users.containsKey(u.getEmail())) { result = "false"; message =
+			 * "Email already in use"; } else { users.put(u.getEmail(), u);
+			 * 
+			 * result = "true"; } }
+			 */
+
+			return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
 		get("/preuzmiKorisnika", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);

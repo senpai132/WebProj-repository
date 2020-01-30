@@ -13,8 +13,23 @@ function getFormData($form){
 		return indexed_array;
 }
 
-function login() {
-	if(!validateEmail(document.getElementById("email").value))
+
+function init() {
+	$.ajax({
+		url: "/rest/getUserType",
+		type: "GET",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+
+			if(!d.superadmin) {
+				window.location.replace("/");
+			}
+		}
+	});
+}
+
+function addOrganization() {
+	/*if(!validateEmail(document.getElementById("email").value))
 	{
 		$("#email_error").html("<font color = \"red\">* Invalid email format</font>");
 		return;
@@ -26,14 +41,17 @@ function login() {
 		$("#password_error").html("<font color = \"red\">* This field is required</font>");
 		return;
 	}
-	$("#password_error").html("");
-
-	var $form = $("#login_form");
-	var data = getFormData($form);
-
-	var s = JSON.stringify(data);
+	$("#password_error").html("");*/
+	
+	
+	var fd = new FormData();
+    var files = $('#logo')[0].files[0];
+    fd.append('logo',files);
+    console.log(fd);
+    
+    var s = JSON.stringify(data);
 	$.ajax({
-		url: "/rest/login",
+		url: "/rest/addOrganization",
 		type:"POST",
 		data: s,
 		contentType:"application/json",
@@ -41,32 +59,13 @@ function login() {
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
 
-			if(!d.result)
+			/*if(!d.result)
 			{
 				$("#error_message").html(d.message);
 			}
 			else {
 				window.location.replace("/");
-			}
+			}*/
 		}
 	});
-}
-
-function init() {
-	$.ajax({
-		url: "/rest/getUserType",
-		type: "GET",
-		complete: function(data) {
-			d = JSON.parse(data.responseText);
-
-			if(d.logged) {
-				window.location.replace("/");
-			}
-		}
-	});
-}
-
-function validateEmail(email) {
-  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
 }
