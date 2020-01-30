@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<title>Add virtual machine category</title>
+		<script src="../javaScript/VMCategory.js"></script>
+		<script src="../javaScript/jquery.min.js"></script>
+	</head>
+	<body>
+		<form id = "VMCAT">
+			<table>
+					
+				<tr>
+					<td>Name:</td>
+					<td><input id = "name" type = "text" name = "name"></td>
+					<td><p id = "nameEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Number of cores: </td>
+					<td><input type = "text" name = "numberOfCores" id = "numberOfCores"></td>
+					<td><p id = "numberOfCoresEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Gbs of RAM: </td>
+					<td><input type = "text" name = "gbOfRAM" id = "gbOfRAM"></td>
+					<td><p id = "gbOfRAMEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Number of GPU cores: </td>
+					<td><input type = "text" name = "numberOfGPUCores" id = "numberOfGPUCores"></td>
+					<td><p id = "numberOfGPUCoresEmpty"></p></td>
+				</tr>
+				<tr>
+					<td align = "center" colspan = "3"><input type = "button" value = "Log in" onclick = "addVM_Category()"></td>
+				</tr>
+			</table>	
+		</form>
+	</body>
+</html>

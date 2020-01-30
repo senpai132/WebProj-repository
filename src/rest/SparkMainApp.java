@@ -9,19 +9,15 @@ import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 
 import beans.Disc;
 import beans.Organization;
+import beans.Status;
 import beans.User;
 import beans.VM_Filter;
 import beans.VirtualMachine;
@@ -395,11 +391,8 @@ public class SparkMainApp {
 			Session ss = req.session(true);
 			
 			String[] selectedDiscs = ss.attribute("selectedDiscs");
-			
-			if(selectedDiscs == null)
-				System.out.println("prosa");
-			
-			return VirtualMachineHandler.addVM(vms, vm, selectedDiscs, discs);
+			Status status = new Status(VirtualMachineHandler.addVM(vms, vm, selectedDiscs, discs));
+			return g.toJson(status);
 		});
 		
 		get("/getVMs", (req, res) -> {
@@ -461,6 +454,140 @@ public class SparkMainApp {
 			VM_Filter vmf = g.fromJson(req.body(), VM_Filter.class);
 			
 			return (g.toJson(VirtualMachineHandler.getFilteredVMs(vms, vmf, vmcs)));
+		});
+		
+		get("/goToVirtualMachines",  (req, res) -> {
+			res.type("application/json");
+			return "{\"result\":true}";			
+		});
+		
+		after("/goToVirtualMachines", (req, res) -> {
+			res.redirect("/html/dummyWorkWithVM.html", 301);
+		});
+		
+		get("/goToNewVM",  (req, res) -> {
+			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || (u.getRole() != Roles.SUPERADMIN && u.getRole() != Roles.ADMIN)) {
+				halt(403, "Unauthorized operation!");
+			}
+			
+			return "{\"result\":true}";			
+		});
+		
+		after("/goToNewVM", (req, res) -> {
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null && (u.getRole() == Roles.SUPERADMIN || u.getRole() == Roles.ADMIN)) {
+				res.redirect("/html/addVM.html", 301);
+			}
+			
+		});
+		
+		get("/goToEditDetailsVM",  (req, res) -> {
+			res.type("application/json");
+			
+			return "{\"result\":true}";			
+		});
+		
+		after("/goToEditDetailsVM", (req, res) -> {
+			
+			res.redirect("/html/edit_detailVM.html", 301);
+			
+		});
+		
+		post("/setNameDetailsVM", (req, res) -> {
+			String[] data = g.fromJson(req.body(), String[].class);
+			Session ss = req.session(true);
+			
+			ss.attribute("editVM_Name", data[0]);
+			
+			return true;
+		});
+		
+		get("/getDetailsVM", (req, res) -> {
+			
+			Session ss = req.session(true);
+			VirtualMachine vm = vms.get(ss.attribute("editVM_Name"));
+			
+			return g.toJson(vm);
+		});
+		
+		get("/goToVM_Categories",  (req, res) -> {
+			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u == null || u.getRole() != Roles.SUPERADMIN)
+				halt(403, "Unauthorized operation!");
+			
+			return g.toJson(new Status(true));			
+		});
+		
+		after("/goToVM_Categories", (req, res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u != null || u.getRole() == Roles.SUPERADMIN)
+				res.redirect("/html/viewVM_Categories.html", 301);
+		});
+		
+		get("/goToAddVM_Categories",  (req, res) -> {
+			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u == null || u.getRole() != Roles.SUPERADMIN)
+				halt(403, "Unauthorized operation!");
+			
+			return g.toJson(new Status(true));			
+		});
+		
+		after("/goToAddVM_Categories", (req, res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u != null || u.getRole() == Roles.SUPERADMIN)
+				res.redirect("/html/addVM_Category.html", 301);
+		});
+		
+		get("/goToEditDetailsVMC",  (req, res) -> {
+			res.type("application/json");
+			
+			return g.toJson(new Status(true));			
+		});
+		
+		after("/goToEditDetailsVMC", (req, res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u != null || u.getRole() == Roles.SUPERADMIN)
+				res.redirect("/html/edit_detailVMC.html", 301);
+			
+		});
+		
+		post("/setNameDetailsVMC", (req, res) -> {
+			String[] data = g.fromJson(req.body(), String[].class);
+			Session ss = req.session(true);
+			
+			ss.attribute("editVMC_Name", data[0]);
+			
+			return true;
+		});
+		
+		get("/getDetailsVMC", (req, res) -> {
+			
+			Session ss = req.session(true);
+			VirtualMachineCategory vmc = vmcs.get(ss.attribute("editVMC_Name"));
+			
+			return g.toJson(vmc);
 		});
 	}
 	

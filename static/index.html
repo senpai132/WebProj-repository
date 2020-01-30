@@ -5,11 +5,29 @@
 		<title>Home page</title>
 		<script src = "/javaScript/jquery.min.js"></script>
 		<script src = "/javaScript/index.js"></script>
+		<script src = "/javaScript/VirtualMachine.js"></script>
+		<script>
+			$(document).ready(listVMs);
+		</script>
 	</head>
 <body>
 	<!-- Ovde treba pregled VM -->
 	<a href="/rest/goToOrganizations">Organizations</a>
+	<!-- <a href="/goToVirtualMachines">Virtual Machines</a> -->
+	<a href="/goToVM_Categories">Virtual machines categories</a>
+	<a href ="/goToDiscs">Discs</a>
  	<a href="rest/logout">Odjava</a>
 <!-- 	<a href="rest/goToUsers">Korisnici</a> -->
+	<table id = "allVMs" border = "1">
+		<tr>
+			<th>Name</th>
+			<th>Organisation</th>
+			<th>Category</th>
+		</tr>
+	</table>
+	<div>
+		<a href = "/goToNewVM">Add VM</a>
+	</div>
+	
 </body>
 </html>
