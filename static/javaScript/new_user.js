@@ -1,15 +1,44 @@
+function getFormData($form){
+		var unindexed_array = $form.serializeArray();
+		var indexed_array = {};
+
+		$.map(unindexed_array, function(n, i){
+		indexed_array[n['name']] = n['value'];
+		});
+
+		return indexed_array;
+}
+
 function init() {
 	$.ajax({
-		url: "/rest/isAdmin",
+		url: "/rest/getUserType",
 		type: "GET",
 		complete: function(data){
 			d = JSON.parse(data.responseText);
-			if(!d.message) {
+			if(!d.logged) {
 				window.location.replace("/");
 			}
 			else {
-				if (!d.super)
+				if (d.superadmin) {
 					$("#org_input").hide();
+				}
+				else {
+					loadOrganizations();
+				}
+			}
+		}
+	});
+}
+
+function loadOrganizations() {
+	$.ajax({
+		url: "/rest/getOrganizations",
+		type: "GET",
+		complete: function(data){
+			d = JSON.parse(data.responseText);
+
+			for(let org of d.orgs) {
+				$("#role").append(`<option value="${org}">${org}</option>`)
 			}
 		}
 	});
@@ -44,8 +73,11 @@ function addUser() {
 	}
 	$("#lastNameError").html("");
 	
+	var data = getFormData($("#new_user_form"));
+	
+	var s = JSON.stringify(data);
 	$.ajax({
-		url: "/rest/newUser",
+		url: "/rest/addUser",
 		type:"POST",
 		data: s,
 		contentType:"application/json",

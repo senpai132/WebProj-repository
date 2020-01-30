@@ -59,8 +59,8 @@ public class SparkMainApp {
 		
 		if (users.size() == 0) {
 			users.put("s@s.com", new User("s@s.com", "s", "s", "s", null, Roles.SUPERADMIN));
-			users.put("c@c.com", new User("c@c.com", "c", "c", "c", null, Roles.CLIENT));
-			users.put("a@a.com", new User("a@a.com", "a", "a", "a", null, Roles.ADMIN));
+			users.put("c@c.com", new User("c@c.com", "c", "c", "c", "ime1", Roles.CLIENT));
+			users.put("a@a.com", new User("a@a.com", "a", "a", "a", "ime1", Roles.ADMIN));
 		}
 		
 		orgs.put("ime1", new Organization("ime1", "opis1", "logo1"));
@@ -128,7 +128,7 @@ public class SparkMainApp {
 				halt(403, "Unauthorized operation!");
 			}
 			
-			return "{\"message\":false}";
+			return "{\"result\":false}";
 		});
 		
 		after("/rest/goToUsers", (req, res) -> {
@@ -175,15 +175,21 @@ public class SparkMainApp {
 			
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
-			
-			String superadmin = u.getRole() == Roles.SUPERADMIN ? "true" : "false";
-			
+
 			ArrayList<User> curr = new ArrayList<User>();
-			for(User user : users.values()) {
-				curr.add(user);
+			if (u.getRole() == Roles.SUPERADMIN) {
+				
+				for(User user : users.values()) {
+					curr.add(user);
+				}
 			}
-			
-			return "{\"superadmin\":" + superadmin + ", \"users\": " + g.toJson(curr) + "}";
+			else {
+				for (String email : orgs.get(u.getOrganization()).getUsers()) {
+					curr.add(users.get(email));
+				}
+			}
+
+			return "{\"users\": " + g.toJson(curr) + "}";
 		});
 		
 		get("/rest/goToNewUser", (req, res) -> {
@@ -208,7 +214,18 @@ public class SparkMainApp {
 			}
 		});
 		
-		post("/rest/newUser", (req,res) -> {
+		get("/rest/getOrganizations", (req, res) -> {
+			res.type("application/json");
+
+			ArrayList<String> curr = new ArrayList<String>();
+			for (String org : orgs.keySet()) {
+				curr.add(org);
+			}
+
+			return "{\"orgs\": " + g.toJson(curr) + "}";
+		});
+		
+		post("/rest/addUser", (req,res) -> {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
 			String result = "false";
@@ -219,19 +236,24 @@ public class SparkMainApp {
 			
 			if (!checkEmail(u.getEmail()) || u.getPassword() == null || u.getPassword().isEmpty() || u.getName() == null || u.getName().isEmpty() || u.getLastName() == null || u.getLastName().isEmpty()) {
 				result = "false";
-				message = "Bad input!";
+				message = "\"Bad input!\"";
 			}
 			else if (logged.getRole() == Roles.ADMIN && u.getRole() == null) {
 				result = "false";
-				message = "Organisation is reqired";
+				message = "\"Organisation is reqired\"";
 			}
 			else {
+				if (logged.getRole() == Roles.ADMIN) {
+					u.setOrganization(logged.getOrganization());
+				}
+				
 				if (users.containsKey(u.getEmail())) {
 					result = "false";
-					message = "Email already in use";
+					message = "\"Email already in use\"";
 				}
 				else {
 					users.put(u.getEmail(), u);
+					orgs.get(u.getOrganization()).getUsers().add(u.getEmail());
 					
 					result = "true";
 				}

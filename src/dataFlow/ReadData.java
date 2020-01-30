@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import beans.Disc;
+import beans.Organization;
 import beans.User;
 import beans.VirtualMachine;
 import beans.VirtualMachineCategory;
@@ -16,27 +17,20 @@ import enums.Roles;
 
 public class ReadData {
 	
-	public static HashMap<String, User> readUsers(String filePath)
+	public static HashMap<String, User> readUsers()
 	{
 		HashMap<String, User> users = new HashMap<String, User>();
 		
 		BufferedReader br;
-
+		String fs = System.getProperty("file.separator");
 		String line = "";
 		try {
-			br = new BufferedReader(new FileReader(filePath));
+			br = new BufferedReader(new FileReader("."+fs+"data"+fs+"Users.txt"));
 			while((line = br.readLine()) != null)
 			{
-				User u = new User();
 				String[] parts = line.split("\\|");
-				u.setEmail(parts[0]);
-				u.setPassword(parts[1]);
-				u.setName(parts[2]);
-				u.setLastName(parts[3]);
-				u.setOrganizacija(parts[4]);
-				u.setRole(Roles.valueOf(parts[5]));
+				User u = new User(parts[0], parts[1], parts[2], parts[3], parts[4], Roles.valueOf(parts[5]));
 				users.put(u.getEmail(), u);
-					
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
@@ -47,6 +41,38 @@ public class ReadData {
 			e.printStackTrace();
 		}
 		return users;
+	}
+	
+	public static HashMap<String, Organization> readOrganizations()
+	{
+		HashMap<String, Organization> orgs = new HashMap<String, Organization>();
+		
+		BufferedReader br;
+		String fs = System.getProperty("file.separator");
+		String line = "";
+		try {
+			br = new BufferedReader(new FileReader("."+fs+"data"+fs+"Organizations.txt"));
+			while((line = br.readLine()) != null)
+			{
+				String[] parts = line.split("\\|");
+				Organization org = new Organization(parts[0], parts[1], parts[2]);
+				for (String user : parts[3].split("\\#")) {
+					org.getUsers().add(user);
+				}
+				for (String resource : parts[4].split("\\#")) {
+					org.getResources().add(resource);
+				}
+				orgs.put(org.getName(), org);
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return orgs;
 	}
 	
 	public static HashMap<String, Disc> readDiscs()

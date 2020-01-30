@@ -4,28 +4,28 @@ $(document).ready( function() {
 
 function initUsers() {
 	$.ajax({
-		url: "/rest/isAdmin",
+		url: "/rest/getUserType",
 		type: "GET",
 		complete: function(data){
 			d = JSON.parse(data.responseText);
-			if(!d.message) {
-				window.location.replace("/");
+
+			if(d.superadmin || d.admin) {
+				loadUsers(d.superadmin);
 			}
 			else {
-				loadUsers();
+				window.location.replace("/");
 			}
 		}
 	});
 }
 
-function loadUsers() {
+function loadUsers(superAdmin) {
 	$.ajax({
 		url: "/rest/getUsers",
 		type: "GET",
 		complete: function(data){
 			d = JSON.parse(data.responseText);
 			
-			var superAdmin = d.superadmin;
 			var users = d.users;
 			var table = $("#table_users");
 
@@ -47,11 +47,10 @@ function makeTableRow(user, superAdmin) {
 			<td>${user.email}</td>
 			<td>${user.name}</td>
 			<td>${user.lastName}</td>`;
-	
 	if (superAdmin) {
-		row.concat(`<td>${user.organizacija}</td>`);
+		row = row.concat(`<td>${user.organization}</td>`);
 	}
-	row.concat(`</tr>`)
+	row = row.concat(`</tr>`)
 	
 	return row;
 }

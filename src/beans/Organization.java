@@ -19,6 +19,8 @@ public class Organization {
 		this.name = name;
 		this.description = description;
 		this.logo = logo;
+		users = new ArrayList<String>();
+		resources = new ArrayList<String>();
 	}
 
 	public String getDescription() {

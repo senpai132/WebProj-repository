@@ -28,9 +28,10 @@ public class OrganizationHandler {
 			return imgPath;
 		}
 	  
-		String newImgPath = ""; 
+		String newImgPath = "";
+		String imgName = generateRandomString() + ".jpg";
 		if(imgPath == null) {
-			newImgPath = "./data/" + generateRandomString() + ".jpg";
+			newImgPath = "./static/logos/" + imgName;
 		}
 			
 		else 
@@ -49,7 +50,7 @@ public class OrganizationHandler {
 			System.out.println("Image extracted unsuccessfully"); 
 		}
 	  
-		return newImgPath; 
+		return "../logos/" + imgName; 
 	}
 	
 	private static void setUpLogo(Organization org) {

@@ -57,12 +57,12 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public String getOrganizacija() {
+	public String getOrganization() {
 		return organization;
 	}
 
-	public void setOrganizacija(String organizacija) {
-		this.organization = organizacija;
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 	public Roles getRole() {

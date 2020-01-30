@@ -28,7 +28,7 @@ function loadOrganizations() {
 			var table = $("#table_organizations");
 			
 			for(let org of orgs) {
-				table.append(`<tr><td>${org.name}</td><td>${org.description}</td><td><img src="${org.logo}"/></td></tr>`);
+				table.append(`<tr><td>${org.name}</td><td>${org.description}</td><td><img height="50" width="50" src="${org.logo}"/></td></tr>`);
 			}
 		}
 	});
