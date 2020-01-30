@@ -29,43 +29,63 @@ function init() {
 }
 
 function addOrganization() {
-	/*if(!validateEmail(document.getElementById("email").value))
+
+	if(document.getElementById("name").value == "")
 	{
-		$("#email_error").html("<font color = \"red\">* Invalid email format</font>");
+		$("#name_error").html("Name is required");
 		return;
 	}
-	$("#email_error").html("");
-
-	if(document.getElementById("password").value == "")
+	$("#name_error").html("");
+	if(document.getElementById("description").value == "")
 	{
-		$("#password_error").html("<font color = \"red\">* This field is required</font>");
+		$("#description_error").html("Description is required");
 		return;
 	}
-	$("#password_error").html("");*/
+	$("#description_error").html("");
 	
-	
-	var fd = new FormData();
-    var files = $('#logo')[0].files[0];
-    fd.append('logo',files);
-    console.log(fd);
-    
-    var s = JSON.stringify(data);
-	$.ajax({
-		url: "/rest/addOrganization",
-		type:"POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			d = JSON.parse(data.responseText);
+	var formData = getFormData($("#organization_form"));
 
-			/*if(!d.result)
-			{
-				$("#error_message").html(d.message);
-			}
-			else {
-				window.location.replace("/");
-			}*/
-		}
-	});
+    getImgBytes(function(jsonData) {
+        $.ajax({
+            url: "/rest/addOrganization",
+            type: "POST",
+            data: jsonData,
+            contentType: "application/json",
+            dataType: "json",
+            complete: function(data) {
+            	d = JSON.parse(data.responseText);
+
+            	if (d.result) {
+            		window.location.replace("/html/organizations.html");
+            	}
+            	else {
+            		$("#error_message").html(data.message);
+            	}
+            }
+        });
+    }, formData);
+}
+
+function getImgBytes(callback, data) {
+    logoImg = $("#logo")[0];
+
+    if(logoImg.files.length != 0) {
+        if(logoImg.files[0].type.includes("image") && (logoImg.files[0].size / 1048576.0) < 1.0) {
+            var reader = new FileReader();
+            reader.onload = function(evt) {
+                data.logo = evt.target.result;
+                callback(JSON.stringify(data));
+            };
+
+            reader.readAsBinaryString(logoImg.files[0]);
+            return;
+        } else {
+            var error = $("#image_error");
+            error.text("Please select image that is lower then 1MB");
+            error.show();
+            return;
+        }
+    }
+
+    callback(JSON.stringify(data));
 }

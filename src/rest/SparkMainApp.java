@@ -9,6 +9,10 @@ import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,6 +29,7 @@ import beans.VirtualMachineCategory;
 import dataFlow.ReadData;
 import enums.Roles;
 import logicForDiscs.DiscsHandler;
+import logicForOrganizations.OrganizationHandler;
 import logicForVM_Categories.VM_CategoriesHandler;
 import logicForVMs.VirtualMachineHandler;
 import spark.Session;
@@ -292,27 +297,26 @@ public class SparkMainApp {
 		});
 		
 		post("/rest/addOrganization", (req,res) -> {
-			String payload = req.body();
-			Organization o = g.fromJson(payload, Organization.class);
-			String result = "false";
-			String message = "";
-			
-			Session ss = req.session(true);
-			User logged = ss.attribute("user");
-			
-			/*
-			 * if (!checkEmail(u.getEmail()) || u.getPassword() == null ||
-			 * u.getPassword().isEmpty() || u.getName() == null || u.getName().isEmpty() ||
-			 * u.getLastName() == null || u.getLastName().isEmpty()) { result = "false";
-			 * message = "Bad input!"; } else if (logged.getRole() == Roles.ADMIN &&
-			 * u.getRole() == null) { result = "false"; message = "Organisation is reqired";
-			 * } else { if (users.containsKey(u.getEmail())) { result = "false"; message =
-			 * "Email already in use"; } else { users.put(u.getEmail(), u);
-			 * 
-			 * result = "true"; } }
-			 */
+			res.type("application/json");
+            Organization org = g.fromJson(req.body(), Organization.class);
+            String result = "true";
+            String message = "\"\"";
+            
+            if (org.getName() == null || org.getName().isEmpty()) {
+				result = "false";
+				message = "\"Name is reqired\"";
+			}
+            if (org.getDescription() == null || org.getDescription().isEmpty()) {
+				result = "false";
+				message = "\"Description is reqired\"";
+			}
+            
+            if (!OrganizationHandler.AddOrganization(orgs, org)) {
+            	message = "\"Name already exists\"";
+            	result = "false";
+            }
 
-			return "{\"result\": " + result + ", \"message\": " + message + "}";
+            return "{\"result\": " + result + ", \"message\": " + message + "}";
 		});
 		
 		get("/preuzmiKorisnika", (req, res) -> {
@@ -472,5 +476,4 @@ public class SparkMainApp {
 		
 		return pat.matcher(email).matches(); 
 	}
-
 }

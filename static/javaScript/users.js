@@ -1,3 +1,7 @@
+$(document).ready( function() {
+	initUsers();
+});
+
 function initUsers() {
 	$.ajax({
 		url: "/rest/isAdmin",
