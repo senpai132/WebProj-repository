@@ -28,7 +28,7 @@ function addVM_Category()
 		complete: function()
 		{
 			alert("VM category added successfully");
-			listVM_Categories();
+			window.location.assign("../html/viewVM_Categories.html");
 		}
 	});
 }
@@ -68,12 +68,45 @@ function listVM_Categories()
 					"<td>"+VM_Categories[indeks].gbOfRAM+"</td>" +
 					"<td>"+VM_Categories[indeks].numberOfGPUCores+"</td>" + 
 					"<td><a onclick = \"initDeleteVM_Category('"+VM_Categories[indeks].name+"')\">Delete</a></td>" + 
-					"<td><a onclick = \"initEditVM_Category('" + item.name + "')\">Edit</a></td>" + 
+					"<td><a href = \"/goToEditDetailsVMC\" onclick = \"initDetailsVMC('" + item.name + "')\">Edit</a></td>" + 
 					"</tr>"
 				);
 			});
 		}
 	});
+}
+
+function initDetailsVMC(name)
+{
+	data = [name];
+	s = JSON.stringify(data);
+	
+	$.ajax(
+	{
+		url: "/setNameDetailsVMC",
+		type: "POST",
+		contentType: "application/json",
+		dataType: "json",
+		data: s
+	});	
+}
+
+function loadDetailsVMC()
+{
+	$.ajax(
+	{
+		url: "/getDetailsVMC",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			vm = JSON.parse(data.responseText);
+			
+			initEditVM_Category(vm.name);
+		}
+	});
+	
 }
 
 function initEditVM_Category(name)
@@ -143,7 +176,7 @@ function editVMC()
 		success: function()
 		{
 			alert("VMC edited successfully");
-			listVM_Categories();
+			window.location.assign("../html/viewVM_Categories.html");
 		}
 	});
 }

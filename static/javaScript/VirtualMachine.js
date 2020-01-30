@@ -148,10 +148,10 @@ function listVMs()
 					"<tr>" +
 					"<td>"+item.name+"</td>" +
 					"<td>"+item.organisation+"</td>" +
-					"<td>"+item.category+"</td>" +
+					"<td>"+item.category+"</td>" + (1 === 1 ?
 					"<td><a onclick = \"initDeleteVM('"+item.name+"')\">Delete</a></td>" + 
-					"<td><a onclick = \"initDetailsVM('" + item.name + "')\">Edit</a></td>" + 
-					"</tr>"
+					"<td><a href = \"goToEditDetailsVM\" onclick = \"initDetailsVM('" + item.name + "')\">Edit</a></td>" + 
+					"</tr>" : "</tr>")
 				);
 			});
 		}
@@ -160,9 +160,37 @@ function listVMs()
 
 function initDetailsVM(name)
 {
-	initSelectTags("categoryDetails", "organisationDetails");
-	initFreeDisks("#freeDiscsEdit");
-	getVMDetails(name, findVM);
+	data = [name];
+	s = JSON.stringify(data);
+	
+	$.ajax(
+	{
+		url: "/setNameDetailsVM",
+		type: "POST",
+		contentType: "application/json",
+		dataType: "json",
+		data: s
+	});	
+}
+
+function loadDetailsVM()
+{
+	$.ajax(
+	{
+		url: "/getDetailsVM",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			vm = JSON.parse(data.responseText);
+			
+			initSelectTags("categoryDetails", "organisationDetails");
+			initFreeDisks("#freeDiscsEdit");
+			getVMDetails(vm.name, findVM);
+		}
+	});
+	
 }
 
 function getVMDetails(name, callback)
@@ -197,10 +225,15 @@ function addVM()
 		data: s,
 		contentType: "application/json",
 		dataType: "json",
-		complete: function()
+		complete: function(data)
 		{
 			alert("VM added successfully");
-			listVMs();
+			alert(data.responseText);
+			stat = JSON.parse(data.responseText);
+			alert(stat.statusAkcije);
+			if(stat.statusAkcije == true)
+				window.location.assign("/");
+			
 		}
 	});
 }
@@ -226,7 +259,7 @@ function findVM(name, callback)
 {
 	VMsReturned.forEach(function(item)
 	{
-		if(name === item.name)
+		if(name == item.name)
 		{
 			foundVM = item;
 			callback(item.category, 0);

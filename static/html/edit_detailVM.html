@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<title>Edit and details VM</title>
+		<script src = "../javaScript/jquery.min.js"></script>
+		<script src = "../javaScript/VirtualMachine.js"></script>
+		<script>
+			$(document).ready(loadDetailsVM);
+		</script>
+	</head>
+	<body>
+		<form id = "detailsVM">
+			<table>
+					
+				<tr>
+					<td>Name:</td>
+					<td><input id = "nameDetails" type = "text" name = "name"></td>
+					<td><p id = "nameEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Organisation: </td>
+					<td>
+						<select name = "organisation" id = "organisationDetails">
+						</select>
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Category: </td>
+					<td>
+						<select name = "category" id = "categoryDetails" onchange="initRefresh()">
+						</select>	
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Number of cores:</td>
+					<td><p id = "VM_DetailsNoC"></p></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Gigabytes of RAM:</td>
+					<td><p id = "VM_DetailsRAM"></p></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Number of GPU cores</td>
+					<td><p id = "VM_DetailsGPU"></p></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td align = "center" colspan = "3"><input type = "button" value = "Add" onclick = "saveSelectedDiscs(editVM)"></td>
+				</tr>
+			</table>	
+		</form>
+		<form id = "freeDiscsFormEdit">
+			<table id = "freeDiscsEdit">
+
+			</table>
+		</form>
+	</body>
+</html>

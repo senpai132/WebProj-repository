@@ -143,7 +143,8 @@ public class ReadData {
 				String[] activitiesString  = parts[4].split("\\,");
 				HashMap<String, String> activities = new HashMap<String, String>();
 				for(String s : activitiesString)
-					activities.put(s.split("\\#")[0], s.split("\\#")[1]);
+					if(!s.equals(""))
+						activities.put(s.split("\\#")[0], s.split("\\#")[1]);
 				
 				VirtualMachine vm = new VirtualMachine(parts[0], parts[1], parts[2], discs, activities, parts[5].equals("true") ? true : false);
 				vms.put(vm.getName(), vm);
