@@ -25,8 +25,11 @@ function addVM_Category()
 		data: s,
 		contentType: "application/json",
 		dataType: "json",
-		complete: function()
+		complete: function(data)
 		{
+			if(data.responseText == "Unauthorized operation!")
+				return;
+				//window.location.assign("/");
 			alert("VM category added successfully");
 			window.location.assign("../html/viewVM_Categories.html");
 		}
@@ -58,6 +61,8 @@ function listVM_Categories()
 		contentType: "application/json",
 		dataType: "json",
 		complete: function(data){
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			VM_Categories = JSON.parse(data.responseText);
 			$("#allVM_Categories").html("");
 			VM_Categories.forEach(function(item, indeks){
