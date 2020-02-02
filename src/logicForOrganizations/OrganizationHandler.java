@@ -29,14 +29,39 @@ public class OrganizationHandler {
 		return null;
 	}
 	
+	public static String EditOrganization(HashMap<String, Organization> orgs, Organization org, String oldOrganization) {
+		if (!orgs.containsKey(oldOrganization)) {
+			return "Key does not exists";
+		}
+		
+		Organization found = orgs.get(oldOrganization);
+		found.setName(org.getName());
+		found.setDescription(org.getDescription());
+
+		try {
+			found.setLogo(changeLogo(found.getLogo(), org.getLogo()));
+		} catch (FileNotFoundException e) {
+			return "File not found exception";
+		} catch (IOException e) {
+			return "Error uploading file";
+		}
+
+		return null;
+	}
+	
 	private static String extractImageFromBytes(String logo, String imgPath) throws FileNotFoundException, IOException { 
 		if(logo == null || logo.isEmpty()) {
-			return "../logos/default.png";
+			if (!imgPath.isEmpty() && imgPath != null) {
+				return imgPath;
+			}
+			else {
+				return "../logos/default.png";
+			}
 		}
 	  
 		String newImgPath = "";
 		String imgName = generateRandomString() + ".jpg";
-		if(imgPath == null) {
+		if(imgPath == null || imgPath.contains("default.png")) {
 			newImgPath = "./static/logos/" + imgName;
 		}
 			
@@ -50,7 +75,7 @@ public class OrganizationHandler {
 				writer.write(k); 
 			}
 			
-			System.out.println("Image extracted successfully"); 
+			System.out.println("Image extracted successfully");
 		} 
 	  
 		return "../logos/" + imgName; 
@@ -60,8 +85,8 @@ public class OrganizationHandler {
 		org.setLogo(extractImageFromBytes(org.getLogo(), null));
     }
 
-	private static void changeLogo(String oldLogo, Organization newOrg) throws FileNotFoundException, IOException {
-		newOrg.setLogo(extractImageFromBytes(newOrg.getLogo(), oldLogo));
+	private static String changeLogo(String oldLogoPath, String newLogo) throws FileNotFoundException, IOException {
+		return extractImageFromBytes(newLogo, oldLogoPath);
     }
     
     private static String generateRandomString() {
