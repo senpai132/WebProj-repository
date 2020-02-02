@@ -14,42 +14,50 @@ function getFormData($form){
 }
 
 function login() {
+	var error = false;
+	
 	if(!validateEmail(document.getElementById("email").value))
 	{
 		$("#email_error").html("<font color = \"red\">* Invalid email format</font>");
-		return;
+		error = true;
 	}
-	$("#email_error").html("");
+	else {
+		$("#email_error").html("");
+	}
 
 	if(document.getElementById("password").value == "")
 	{
 		$("#password_error").html("<font color = \"red\">* This field is required</font>");
-		return;
+		error = true;
 	}
-	$("#password_error").html("");
+	else {
+		$("#password_error").html("");
+	}
 
-	var $form = $("#login_form");
-	var data = getFormData($form);
+	if (!error) {
+		var $form = $("#login_form");
+		var data = getFormData($form);
 
-	var s = JSON.stringify(data);
-	$.ajax({
-		url: "/rest/login",
-		type:"POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			d = JSON.parse(data.responseText);
+		var s = JSON.stringify(data);
+		$.ajax({
+			url: "/rest/login",
+			type:"POST",
+			data: s,
+			contentType:"application/json",
+			dataType:"json",
+			complete: function(data) {
+				d = JSON.parse(data.responseText);
 
-			if(!d.result)
-			{
-				$("#error_message").html(d.message);
+				if(!d.result)
+				{
+					$("#error_message").html(d.message);
+				}
+				else {
+					window.location.replace("/");
+				}
 			}
-			else {
-				window.location.replace("/");
-			}
-		}
-	});
+		});
+	}
 }
 
 function init() {

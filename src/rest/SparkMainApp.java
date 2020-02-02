@@ -44,31 +44,36 @@ public class SparkMainApp {
 		port(8080);
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
-		
-		//String fs = System.getProperty("file.separator");
-		//users = DataManipulation.readUsers("."+fs+"data"+fs+"users.txt");
-		orgs = new HashMap<String, Organization>();
-		users = new HashMap<String, User>();
+
+		orgs = ReadData.readOrganizations();
+		users = ReadData.readUsers();
 		vms = ReadData.readVMs();
 		discs = ReadData.readDiscs();
 		vmcs = ReadData.readVM_Categories();
 		
+		//TODO remove
 		if (users.size() == 0) {
 			users.put("s@s.com", new User("s@s.com", "s", "s", "s", null, Roles.SUPERADMIN));
 			users.put("c@c.com", new User("c@c.com", "c", "c", "c", "ime1", Roles.CLIENT));
 			users.put("a@a.com", new User("a@a.com", "a", "a", "a", "ime1", Roles.ADMIN));
 		}
 		
-		orgs.put("ime1", new Organization("ime1", "opis1", "logo1"));
-		orgs.put("ime2", new Organization("ime2", "opis2", "logo2"));
-		orgs.put("ime3", new Organization("ime3", "opis3", "logo3"));
-			
+		if (orgs.size() == 0) {
+			orgs.put("ime1", new Organization("ime1", "opis1", "../logos/default.png"));
+			orgs.put("ime2", new Organization("ime2", "opis2", "../logos/default.png"));
+			orgs.put("ime3", new Organization("ime3", "opis3", "../logos/default.png"));
+		}
+
 		post("/rest/login", (req,res) -> {
+			res.type("application/json");
+			
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
 			String result = "false";
-			String message = "\"Valid\"";
+			String message = "\"\"";
 			
+			Session ss = req.session(true);
+
 			if (!checkEmail(u.getEmail())) {
 				message = "\"Invalid email\"";
 			}
@@ -79,11 +84,13 @@ public class SparkMainApp {
 				User loaded = users.get(u.getEmail());
 				
 				if (loaded != null && loaded.getPassword().equals(u.getPassword())) {
-					Session ss = req.session(true);
 					User user = ss.attribute("user");
 					if (user == null) {
 						ss.attribute("user", loaded);
 						result = "true";
+					}
+					else {
+						message = "\"User already logged\"";
 					}
 				}
 				else {
@@ -98,12 +105,16 @@ public class SparkMainApp {
 			res.type("application/json");
 			Session ss = req.session(true);
 			User user = ss.attribute("user");
+			String result = "true";
 			
 			if (user != null) {
 				ss.invalidate();
 			}
+			else {
+				result = "false";
+			}
 
-			return "{\"result\": true}";
+			return "{\"result\": " + result + "}";
 		});
 		
 		after("/rest/logout", (req, res) -> {
@@ -142,28 +153,26 @@ public class SparkMainApp {
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
 			String logged = "false";
-			String client = "false";
-			String admin = "false";
-			String superAdmin = "false";
-				
+			String role = "\"\"";
+
 			if (u != null) {
 				logged = "true";
 				switch(u.getRole()) {
 					case SUPERADMIN:
-						superAdmin = "true";
+						role = "\"superadmin\"";
 						break;
 						
 					case ADMIN:
-						admin = "true";
+						role = "\"admin\"";
 						break;
 						
 					case CLIENT:
-						client = "true";
+						role = "\"client\"";
 						break;
 				}
 			}
 			
-			return "{\"logged\": " + logged + ", \"client\": " + client + ", \"admin\": " + admin + ", \"superadmin\": " + superAdmin + "}";
+			return "{\"logged\": " + logged + ", \"role\": " + role + "}";
 		});
 		
 		get("/rest/getUsers", (req, res) -> {
@@ -209,18 +218,7 @@ public class SparkMainApp {
 				res.redirect("/html/new_user.html", 301);
 			}
 		});
-		
-		get("/rest/getOrganizations", (req, res) -> {
-			res.type("application/json");
 
-			ArrayList<String> curr = new ArrayList<String>();
-			for (String org : orgs.keySet()) {
-				curr.add(org);
-			}
-
-			return "{\"orgs\": " + g.toJson(curr) + "}";
-		});
-		
 		post("/rest/addUser", (req,res) -> {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
@@ -257,17 +255,21 @@ public class SparkMainApp {
 
 			return "{\"result\": " + result + ", \"message\": " + message + "}";
 		});
-		
+
 		get("/rest/goToOrganizations", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
+			String result = "false";
 			
 			if (u == null || u.getRole() != Roles.SUPERADMIN) {
 				halt(403, "Unauthorized operation!");
 			}
+			else {
+				result = "true";
+			}
 			
-			return "{\"result\":false}";
+			return "{\"result\":" + result + "}";
 		});
 		
 		after("/rest/goToOrganizations", (req, res) -> {
@@ -282,26 +284,35 @@ public class SparkMainApp {
 		
 		get("/rest/getOrganizations", (req, res) -> {
 			res.type("application/json");
+			String result = "true";
 			
 			ArrayList<Organization> curr = new ArrayList<Organization>();
-			
 			for (Organization org : orgs.values()) {
 				curr.add(org);
 			}
 			
-			return g.toJson(curr);
-		});
-		
-		get("/rest/goToNewOrganization", (req, res) -> {
-			res.type("application/json");
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
 			
 			if (u == null || u.getRole() != Roles.SUPERADMIN) {
+				result = "false";
+			}
+
+			return "{\"orgs\": " + g.toJson(curr) + ", \"result\": " + result + "}";
+		});
+
+		get("/rest/goToNewOrganization", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String result = "true";
+			
+			if (u == null || u.getRole() != Roles.SUPERADMIN) {
 				halt(403, "Unauthorized operation!");
+				result = "false";
 			}
 			
-			return "{\"result\":false}";
+			return "{\"result\":" + result + "}";
 		});
 		
 		after("/rest/goToNewOrganization", (req, res) -> {
@@ -320,30 +331,34 @@ public class SparkMainApp {
             String result = "true";
             String message = "\"\"";
             
-            if (org.getName() == null || org.getName().isEmpty()) {
+            Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || u.getRole() != Roles.SUPERADMIN) {
 				result = "false";
-				message = "\"Name is reqired\"";
+				message = "\"You must be superadmin\"";
 			}
-            if (org.getDescription() == null || org.getDescription().isEmpty()) {
-				result = "false";
-				message = "\"Description is reqired\"";
+			else {
+				if (org.getName() == null || org.getName().isEmpty()) {
+					result = "false";
+					message = "\"Name is reqired\"";
+				}
+				else if (org.getDescription() == null || org.getDescription().isEmpty()) {
+					result = "false";
+					message = "\"Description is reqired\"";
+				}
+				else {
+					String addMsg = OrganizationHandler.AddOrganization(orgs, org);
+		            if (addMsg != null) {
+		            	message = "\"" + addMsg + "\"";
+		            	result = "false";
+		            }
+				}
 			}
-            
-            if (!OrganizationHandler.AddOrganization(orgs, org)) {
-            	message = "\"Name already exists\"";
-            	result = "false";
-            }
 
             return "{\"result\": " + result + ", \"message\": " + message + "}";
 		});
 		
-		get("/preuzmiKorisnika", (req, res) -> {
-			res.type("application/json");
-			Session ss = req.session(true);
-			User u = ss.attribute("user");
-			return g.toJson(u);
-		});
-
 		post("/addVM_Category", (req, res) ->{
 			res.type("application/json");
 			VirtualMachineCategory vmc;

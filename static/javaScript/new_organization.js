@@ -21,7 +21,7 @@ function init() {
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
 
-			if(!d.superadmin) {
+			if(d.role != "superadmin") {
 				window.location.replace("/");
 			}
 		}
@@ -30,40 +30,49 @@ function init() {
 
 function addOrganization() {
 
+	var error = false;
+	
 	if(document.getElementById("name").value == "")
 	{
 		$("#name_error").html("Name is required");
-		return;
+		error = true;
 	}
-	$("#name_error").html("");
+	else {
+		$("#name_error").html("");
+	}
+
 	if(document.getElementById("description").value == "")
 	{
 		$("#description_error").html("Description is required");
-		return;
+		error = true;
 	}
-	$("#description_error").html("");
+	else {
+		$("#description_error").html("");
+	}
 	
-	var formData = getFormData($("#organization_form"));
+	if (!error) {
+		var formData = getFormData($("#organization_form"));
 
-    getImgBytes(function(jsonData) {
-        $.ajax({
-            url: "/rest/addOrganization",
-            type: "POST",
-            data: jsonData,
-            contentType: "application/json",
-            dataType: "json",
-            complete: function(data) {
-            	d = JSON.parse(data.responseText);
+	    getImgBytes(function(jsonData) {
+	        $.ajax({
+	            url: "/rest/addOrganization",
+	            type: "POST",
+	            data: jsonData,
+	            contentType: "application/json",
+	            dataType: "json",
+	            complete: function(data) {
+	            	d = JSON.parse(data.responseText);
 
-            	if (d.result) {
-            		window.location.replace("/html/organizations.html");
-            	}
-            	else {
-            		$("#error_message").html(data.message);
-            	}
-            }
-        });
-    }, formData);
+	            	if (d.result) {
+	            		window.location.replace("/html/organizations.html");
+	            	}
+	            	else {
+	            		$("#error_message").html(d.message);
+	            	}
+	            }
+	        });
+	    }, formData);
+	}
 }
 
 function getImgBytes(callback, data) {

@@ -8,7 +8,8 @@ function init() {
 		type: "GET",
 		complete: function(data){
 			d = JSON.parse(data.responseText);
-			if(!d.superadmin) {
+
+			if(d.role != "superadmin") {
 				window.location.replace("/");
 			}
 			else {
@@ -23,12 +24,17 @@ function loadOrganizations() {
 		url: "/rest/getOrganizations",
 		type: "GET",
 		complete: function(data){
-			orgs = JSON.parse(data.responseText);
-			
-			var table = $("#table_organizations");
-			
-			for(let org of orgs) {
-				table.append(`<tr><td>${org.name}</td><td>${org.description}</td><td><img height="50" width="50" src="${org.logo}"/></td></tr>`);
+			d = JSON.parse(data.responseText);
+
+			if (d.result) {
+				var table = $("#table_organizations");
+				
+				for(let org of d.orgs) {
+					table.append(`<tr><td>${org.name}</td><td>${org.description}</td><td><img height="50" width="50" src="${org.logo}"/></td></tr>`);
+				}
+			}
+			else {
+				window.location.replace("/");
 			}
 		}
 	});

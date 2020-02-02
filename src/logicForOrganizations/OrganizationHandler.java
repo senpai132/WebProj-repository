@@ -1,6 +1,6 @@
 package logicForOrganizations;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,20 +12,26 @@ import beans.Organization;
 
 public class OrganizationHandler {
 
-	public static boolean AddOrganization(HashMap<String, Organization> orgs, Organization org) {
+	public static String AddOrganization(HashMap<String, Organization> orgs, Organization org) {
 		if (orgs.containsKey(org.getName())) {
-			return false;
+			return "Name already exists";
 		}
 		
-		setUpLogo(org);
+		try {
+			setUpLogo(org);
+		} catch (FileNotFoundException e) {
+			return "File not found exception";
+		} catch (IOException e) {
+			return "Error uploading file";
+		}
 		
 		orgs.put(org.getName(), org);
-		return true;
+		return null;
 	}
 	
-	private static String extractImageFromBytes(String logo, String imgPath) { 
-		if(logo == null) {
-			return imgPath;
+	private static String extractImageFromBytes(String logo, String imgPath) throws FileNotFoundException, IOException { 
+		if(logo == null || logo.isEmpty()) {
+			return "../logos/default.png";
 		}
 	  
 		String newImgPath = "";
@@ -45,19 +51,16 @@ public class OrganizationHandler {
 			}
 			
 			System.out.println("Image extracted successfully"); 
-		} catch (IOException ioe) { 
-			ioe.printStackTrace();
-			System.out.println("Image extracted unsuccessfully"); 
-		}
+		} 
 	  
 		return "../logos/" + imgName; 
 	}
 	
-	private static void setUpLogo(Organization org) {
+	private static void setUpLogo(Organization org) throws FileNotFoundException, IOException {
 		org.setLogo(extractImageFromBytes(org.getLogo(), null));
     }
 
-	private static void changeLogo(String oldLogo, Organization newOrg) {
+	private static void changeLogo(String oldLogo, Organization newOrg) throws FileNotFoundException, IOException {
 		newOrg.setLogo(extractImageFromBytes(newOrg.getLogo(), oldLogo));
     }
     
