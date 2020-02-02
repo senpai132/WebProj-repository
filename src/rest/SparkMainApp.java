@@ -359,6 +359,113 @@ public class SparkMainApp {
             return "{\"result\": " + result + ", \"message\": " + message + "}";
 		});
 		
+		get("/rest/goToEditOrganization", (req,res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String result = "true";
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				halt(403, "Unauthorized operation!");
+				result = "false";
+			}
+			
+			return "{\"result\":" + result + "}";
+		});
+		
+		after("/rest/goToEditOrganization", (req,res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null && u.getRole() != Roles.CLIENT) {
+				res.redirect("/html/edit_organization.html", 301);
+			}
+		});
+		
+		post("/rest/setEditOrganization", (req, res) -> {
+			res.type("application/json");
+			String[] data = g.fromJson(req.body(), String[].class);
+            String result = "true";
+            String message = "\"\"";
+
+            Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+				message = "\"You cannot be client\"";
+			}
+			else if (u.getRole() == Roles.ADMIN && !orgs.get(data[0]).getUsers().contains(u.getEmail())) {
+				result = "false";
+				message = "\"You don't have rights to edit other organization\"";
+			}
+			else {
+				ss.attribute("editOrgName", data[0]);
+			}
+
+            return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
+		get("/rest/getEditOrganization", (req, res) -> {
+			res.type("application/json");
+			String result = "true";
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String orgName = ss.attribute("editOrgName");
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+			}
+			else if (u.getRole() == Roles.ADMIN && !orgs.get(orgName).getUsers().contains(u.getEmail())) {
+				result = "false";
+			}
+
+			return "{\"org\": " + g.toJson(orgs.get(orgName)) + ", \"result\": " + result + "}";
+		});
+		
+		post("/rest/editOrganization", (req,res) -> {
+			res.type("application/json");
+            Organization org = g.fromJson(req.body(), Organization.class);
+            String result = "true";
+            String message = "\"\"";
+            
+            Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String oldOrg = ss.attribute("editOrgName");
+			Organization orgFound = orgs.get(oldOrg);
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+				message = "\"You must be superadmin\"";
+			}
+			else if (u.getRole() == Roles.ADMIN) {
+				if (!orgFound.getUsers().contains((u.getEmail()))) {
+					result = "false";
+					message = "\"You are not in organization\"";
+				}
+			}
+			else {
+				if (org.getName() == null || org.getName().isEmpty()) {
+					result = "false";
+					message = "\"Name is reqired\"";
+				}
+				else if (org.getDescription() == null || org.getDescription().isEmpty()) {
+					result = "false";
+					message = "\"Description is reqired\"";
+				}
+				else {
+					String addMsg = OrganizationHandler.EditOrganization(orgs, org, oldOrg);
+		            if (addMsg != null) {
+		            	message = "\"" + addMsg + "\"";
+		            	result = "false";
+		            }
+				}
+			}
+
+            return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
 		post("/addVM_Category", (req, res) ->{
 			res.type("application/json");
 			VirtualMachineCategory vmc;
