@@ -6,11 +6,71 @@
 		<script>
 			$(document).ready(listDiscs);
 		</script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		
 	</head>
 	<body>
+		<div class="container h-100">
+	  <div class="row m-4">
+	    <div class="col">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarText">
+			    <ul class="navbar-nav mr-auto">
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToOrganizations">Organizations</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToUsers">Users</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/goToVM_Categories">VM categories</a>
+			      </li>			
+			    </ul>
+			    <a class="navbar-text">
+			      Logout
+			    </a>
+			  </div>
+			</nav>
+	    </div>
+	  </div>
+	  <div class="row m-4">
+	    <div class="col m-4">
+			<div class="card text-white bg-light" style="max-width: 18rem;">
+			  	<div class="card-body">
+	   				<ul class="navbar-nav mr-auto">
+				      <li class="nav-item active">
+				        <a class="nav-link" href="/goToDiscs">All Discs</a>
+				      </li>
+				      <li class="nav-item">
+				        <a class="nav-link" href="/goToAddDisc">Add Disc</a>
+				      </li>
+				    </ul>
+			  	</div>
+			</div>
+	    </div>
+	    <div class="col-8 m-4">
+			<div class="card bg-light">
+				<div class="card-header">All discs</div>
+			  	<div class="card-body">
+			    	<table class="table" id="allDiscs">
+						
+					</table>
+			  	</div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+	
+	<!---
 		<table id = "allDiscs">
 
 		</table>
-		<a href = "/goToAddDisc">Add Disc</a>
+		<a href = "/goToAddDisc">Add Disc</a>--->
 	</body>
 </html>

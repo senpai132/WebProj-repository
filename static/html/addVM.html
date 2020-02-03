@@ -3,8 +3,103 @@
 		<title>Add Virtual Machine</title>
 		<script src = "../javaScript/jquery.min.js"></script>
 		<script src = "../javaScript/VirtualMachine.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		
 	</head>
 	<body>
+		<div class="container h-100">
+	  <div class="row m-4">
+	    <div class="col">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarText">
+			    <ul class="navbar-nav mr-auto">
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToOrganizations">Organizations</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToUsers">Users</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/goToVM_Categories">VM categories</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/goToDiscs">Discs</a>
+			      </li>		
+			    </ul>
+			    <a class="navbar-text">
+			      Logout
+			    </a>
+			  </div>
+			</nav>
+	    </div>
+	  </div>
+	  <div class="row m-4">
+	    <div class="col m-4">
+			<div class="card text-white bg-light" style="max-width: 18rem;">
+			  	<div class="card-body">
+	   				<ul class="navbar-nav mr-auto">
+				      <li class="nav-item active">
+				        <a class="nav-link" href="/goToDiscs">All virtual machines</a>
+				      </li>
+				      
+				    </ul>
+			  	</div>
+			</div>
+	    </div>
+	    <div class="col-8 m-4">
+			<div class="card bg-light">
+				<div class="card-header">New VM</div>
+			  	<div class="card-body">
+				  	<form id ="addVM">
+						<div class="form-group">
+						    <label for="name">Name</label>
+						    <input name="name" type="text" class="form-control" id="name">
+					  		<div class="invalid-feedback" id="nameEmpty">
+				
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Organisation</label>	
+					    	<select name = "organisation" id = "organisation">
+							</select>				    
+						    <div class="invalid-feedback" id="numberOfCoresEmpty">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Category</label>
+						    <select name = "category" id = "category">
+							</select>
+						    <div class="invalid-feedback" id="capacityEmpty">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Discs</label>						    
+								<table id = "freeDiscs">
+
+								</table>							
+						    <div class="invalid-feedback" id="numberOfGPUCoresEmpty">
+								
+					        </div>
+					  	</div>
+					  	<button type="button" class="btn btn-primary mt-3 float-right" onclick="saveSelectedDiscs(addVM)">Add</button>
+					</form>
+				</div>
+				<div class="alert alert-danger mt-2" id="error_message" role="alert">
+
+			  	</div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+	<!--
 		<form id = "addVM">
 			<table>
 					
@@ -38,6 +133,6 @@
 				<table id = "freeDiscs">
 
 				</table>
-			</form>	
+			</form>	--->
 	</body>
 </html>

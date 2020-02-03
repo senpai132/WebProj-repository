@@ -64,7 +64,18 @@ function listVM_Categories()
 			if(data.responseText === "Unauthorized operation!")
 				return;
 			VM_Categories = JSON.parse(data.responseText);
-			$("#allVM_Categories").html("");
+			
+			$("#allVM_Categories").html("<thead class=\"thead-dark\">"+
+							"<tr>"+
+								"<th scope=\"col\">Name</th>"+
+								"<th scope=\"col\">Number of Cores</th>"+
+								"<th scope=\"col\">RAM</th>"+
+								"<th scope=\"col\">GPU cores</th>"+
+								"<th scope=\"col\"></th>"+
+								"<th scope=\"col\"></th>"+
+							"</tr>"+
+						"</thead>");
+			
 			VM_Categories.forEach(function(item, indeks){
 				$("#allVM_Categories").append(
 					"<tr>" +
@@ -230,10 +241,12 @@ function validator(name, cores, ram, gpu, mode)
 function validateStringInput(id, mode)
 {
 	$("#"+id+mode).html("");
+	$("#"+id+mode).hide();
 
 	if(document.getElementById(id+"").value === "")
 	{
 		$("#"+id+mode).html("<font color=\"red\">This field is required</font>");
+		$("#"+id+mode).show();
 		return false;
 	}
 	return true;
@@ -242,10 +255,12 @@ function validateStringInput(id, mode)
 function validateIntInput(id, mode)
 {
 	$("#"+id+mode).html("");
+	$("#"+id+mode).hide();
 
 	if(document.getElementById(id+"").value >>> 0 === parseFloat(document.getElementById(id+"").value) == false)
 	{
 		$("#"+id+mode).html("<font color=\"red\">This field must be a positive integer</font>");
+		$("#"+id+mode).show();
 		return false;
 	}
 	return true;

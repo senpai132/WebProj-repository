@@ -15,9 +15,69 @@
 		</script>
 	</head>
 <body>
-	<!-- Ovde treba pregled VM -->
-	<a href="/rest/goToOrganizations">Organizations</a>
-	<!-- <a href="/goToVirtualMachines">Virtual Machines</a> -->
+
+	<div class="container h-100">
+	  <div class="row m-4">
+	    <div class="col">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarText">
+			    <ul class="navbar-nav mr-auto">
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToOrganizations">Organizations</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToUsers">Users</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/goToVM_Categories">VM categories</a>
+			      </li>		
+			      <li class="nav-item">
+			        <a class="nav-link" href="/goToDiscs">Discs</a>
+			      </li>	
+			    </ul>
+			    <a class="navbar-text">
+			      Logout
+			    </a>
+			  </div>
+			</nav>
+	    </div>
+	  </div>
+	  <div class="row m-4">
+	    <div class="col m-4">
+			<div class="card text-white bg-light" style="max-width: 18rem;">
+			  	<div class="card-body">
+	   				<ul class="navbar-nav mr-auto">
+				      <li class="nav-item active">
+				        <a class="nav-link" href="/goToVirtualMachines">All virtual machines</a>
+				      </li>
+				      <li class="nav-item">
+				        <a class="nav-link" href="/goToNewVM">Add VM</a>
+				      </li>
+				    </ul>
+			  	</div>
+			</div>
+	    </div>
+	    <div class="col-8 m-4">
+			<div class="card bg-light">
+				<div class="card-header">All virtual machines</div>
+			  	<div class="card-body">
+			    	<table class="table" id="allVMs">
+						
+					</table>
+			  	</div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+	
+	<!--<a href="/rest/goToOrganizations">Organizations</a>
+	<a href="/goToVirtualMachines">Virtual Machines</a>
 	<a href="/goToVM_Categories">Virtual machines categories</a>
 	<a href ="/goToDiscs">Discs</a>
  	<a href="rest/logout">Odjava</a>
@@ -34,6 +94,6 @@
 	</div>
 	<div class="alert alert-warning" role="alert">
   A simple warning alert—check it out!
-</div>
+</div>--->
 </body>
 </html>

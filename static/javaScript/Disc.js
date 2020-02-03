@@ -78,6 +78,7 @@ function removeDisc(foundDisc)
 			if(data.responseText === "Unauthorized operation!")
 				return;
 			alert("Disc deleted successfully");
+			listDiscs();
 		}
 	});
 }
@@ -93,7 +94,16 @@ function listDiscs()
 			if(data.responseText === "Unauthorized operation!")
 				return;
 			var discs = JSON.parse(data.responseText);
-			$("#allDiscs").html("");
+			$("#allDiscs").html("<thead class=\"thead-dark\">"+
+					"<tr>"+
+					"<th scope=\"col\">Name</th>"+
+					"<th scope=\"col\">Type</th>"+
+					"<th scope=\"col\">Capacity</th>"+
+					"<th scope=\"col\">Parent VM</th>"+
+					"<th scope=\"col\"></th>"+
+					"<th scope=\"col\"></th>"+
+				"</tr>"+
+			"</thead>");
 			discs.forEach(function(item, indeks){
 				$("#allDiscs").append(
 					"<tr>" +
@@ -187,10 +197,12 @@ function validator(name, capacity, mode)
 function validateStringInput(id, mode)
 {
 	$("#"+id+mode).html("");
+	$("#"+id+mode).hide();
 
 	if(document.getElementById(id+"").value === "")
 	{
 		$("#"+id+mode).html("<font color=\"red\">This field is required</font>");
+		$("#"+id+mode).show();
 		return false;
 	}
 	return true;
@@ -199,10 +211,12 @@ function validateStringInput(id, mode)
 function validateIntInput(id, mode)
 {
 	$("#"+id+mode).html("");
+	$("#"+id+mode).hide();
 
 	if(document.getElementById(id+"").value >>> 0 === parseFloat(document.getElementById(id+"").value) == false)
 	{
 		$("#"+id+mode).html("<font color=\"red\">This field must be a positive integer</font>");
+		$("#"+id+mode).show();
 		return false;
 	}
 	return true;

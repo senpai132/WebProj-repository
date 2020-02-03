@@ -6,9 +6,98 @@
 		<script>
 			$(document).ready(loadDetailsVMC);
 		</script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		
 	</head>
 	<body>
-		<form id = "VMCAT_Edit">
+		<body>
+		 <div class="container h-100">
+	  <div class="row m-4">
+	    <div class="col">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarText">
+			    <ul class="navbar-nav mr-auto">
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToOrganizations">Organizations</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToUsers">Users</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/goToDiscs">Discs</a>
+			      </li>	
+			    </ul>
+			    <a class="navbar-text">
+			      Logout
+			    </a>
+			  </div>
+			</nav>
+	    </div>
+	  </div>
+	  <div class="row m-4">
+	    <div class="col m-4">
+			<div class="card text-white bg-light" style="max-width: 18rem;">
+			  	<div class="card-body">
+	   				<ul class="navbar-nav mr-auto">
+				      <li class="nav-item active">
+				        <a class="nav-link" href="/goToVM_Categories">All VM categories</a>
+				      </li>
+				      
+				    </ul>
+			  	</div>
+			</div>
+	    </div>
+	    <div class="col-8 m-4">
+			<div class="card bg-light">
+				<div class="card-header">Edit VM category</div>
+			  	<div class="card-body">
+				  	<form id ="VMCAT_Edit">
+						<div class="form-group">
+						    <label for="name">Name</label>
+						    <input name="name" type="text" class="form-control" id="nameEdit">
+					  		<div class="invalid-feedback" id="nameEditEmptyEdit">
+				
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Number of cores</label>
+						    <input type = "text" name = "numberOfCores" id = "numberOfCoresEdit" class="form-control">
+						    <div class="invalid-feedback" id="numberOfCoresEditEmptyEdit">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">RAM</label>
+						    <input type = "text" name = "gbOfRAM" id = "gbOfRAMEdit" class="form-control">
+						    <div class="invalid-feedback" id="gbOfRAMEditEmptyEdit">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">GPU cores</label>
+						    <input type = "text" name = "numberOfGPUCores" id = "numberOfGPUCoresEdit" class="form-control">
+						    <div class="invalid-feedback" id="numberOfGPUCoresEditEmptyEdit">
+								
+					        </div>
+					  	</div>
+					  	<button type="button" class="btn btn-primary mt-3 float-right" onclick="editVMC()">Save changes</button>
+					</form>
+				</div>
+				<div class="alert alert-danger mt-2" id="error_message" role="alert">
+
+			  	</div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+	
+	<!--	<form id = "VMCAT_Edit">
 			<table>
 					
 				<tr>
@@ -35,6 +124,6 @@
 					<td align = "center" colspan = "3"><input type = "button" value = "Log in" onclick = "editVMC()"></td>
 				</tr>
 			</table>	
-		</form>
+		</form>--->
 	</body>
 </html>

@@ -641,8 +641,8 @@ public class SparkMainApp {
 		
 		post("/saveSelectedDiscs", (req, res) ->{
 			String[] selectedDiscs = g.fromJson(req.body(), String[].class);
-			
-			if(selectedDiscs.length < 1)
+			System.out.println(req.body());
+			if(selectedDiscs.length <= 1)
 				selectedDiscs = new String[0];
 			
 			Session ss = req.session(true);
@@ -888,6 +888,13 @@ public class SparkMainApp {
 			Disc disc = discs.get(ss.attribute("editDisc"));
 			
 			return g.toJson(disc);
+		});
+		
+		post("/toggleVMStatus", (req, res)->{
+			res.type("application/json");
+			String[] vm = g.fromJson(req.body(), String[].class);
+			
+			return g.toJson(new Status(VirtualMachineHandler.toggleStatus(vms, vm)));
 		});
 		
 	}

@@ -1,5 +1,7 @@
 package logicForVMs;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,14 +18,19 @@ public class VirtualMachineHandler {
 			return false;
 		ArrayList<String> vmDiscs = new ArrayList<String>();
 		
-		if(discNames.length != 0)
-			for(int i = 0; i < discNames.length-1; i++)
-			{
-				vmDiscs.add(discNames[i]);
-				
-				if(discs.containsKey(discNames[i]))
-					discs.get(discNames[i]).setParentVM(vm.getName());
-			}
+		//if(discNames != null)
+		//{
+			System.out.println("Usao");
+			if(discNames.length != 0 )
+				for(int i = 0; i < discNames.length-1; i++)
+				{
+					vmDiscs.add(discNames[i]);
+					
+					if(discs.containsKey(discNames[i]))
+						discs.get(discNames[i]).setParentVM(vm.getName());
+				}
+		//}
+		
 				
 		
 		vm.setDiscs(vmDiscs);
@@ -111,6 +118,33 @@ public class VirtualMachineHandler {
 		}
 		
 		return vmsFiltered;
+	}
+
+	public static boolean toggleStatus(HashMap<String, VirtualMachine> vms, String[] vm) {
+		
+		if(vms.get(vm[0]).isOn() == true)
+		{
+			vms.get(vm[0]).setOn(false);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+			LocalDateTime now = LocalDateTime.now();
+			for (HashMap.Entry<String, String> entry : vms.get(vm[0]).getActivity().entrySet()) {
+			    if(entry.getValue().equals(""));
+			    	entry.setValue(dtf.format(now));
+			}
+			
+		}
+		else
+		{
+			vms.get(vm[0]).setOn(true);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+			LocalDateTime now = LocalDateTime.now();
+			vms.get(vm[0]).getActivity().put(dtf.format(now), "");
+		}
+		
+		for(VirtualMachine v: vms.values())
+			System.out.println(v);
+		
+		return true;
 	}
 
 }

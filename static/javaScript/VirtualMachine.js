@@ -25,7 +25,13 @@ function initFreeDisks(id)
 		complete: function(data)
 		{
 			freeDiscs = JSON.parse(data.responseText);
-			$(id).html("");
+			$(id).html("<thead class=\"thead-dark\">"+
+					"<tr>"+
+					"<th scope=\"col\">Name</th>"+
+					"<th scope=\"col\">Type</th>"+
+					"<th scope=\"col\">Capacity</th>"+
+				"</tr>"+
+			"</thead>");
 			freeDiscs.forEach(function(item){
 				$(id).append(
 					"<tr>" +
@@ -78,7 +84,6 @@ function editVM()
 		complete: function()
 		{
 			alert("VM edited successfully");
-			listVMs();
 		}
 	});
 }
@@ -124,10 +129,12 @@ function validator(name, mode)
 function validateStringInput(id, mode)
 {
 	$("#"+id+mode).html("");
+	$("#"+id+mode).hide();
 
 	if(document.getElementById(id+"").value === "")
 	{
 		$("#"+id+mode).html("<font color=\"red\">This field is required</font>");
+		$("#"+id+mode).show();
 		return false;
 	}
 	return true;
@@ -142,7 +149,15 @@ function listVMs()
 		dataType: "json",
 		complete: function(data){
 			var discs = JSON.parse(data.responseText);
-			$("#allVMs").html("");
+			$("#allVMs").html("<thead class=\"thead-dark\">"+
+					"<tr>"+
+					"<th scope=\"col\">Name</th>"+
+					"<th scope=\"col\">Organisation</th>"+
+					"<th scope=\"col\">Category</th>"+
+					"<th scope=\"col\"></th>"+
+					"<th scope=\"col\"></th>"+
+				"</tr>"+
+			"</thead>");
 			discs.forEach(function(item, indeks){
 				$("#allVMs").append(
 					"<tr>" +
@@ -151,12 +166,33 @@ function listVMs()
 					"<td>"+item.category+"</td>" + (1 === 1 ?
 					"<td><a onclick = \"initDeleteVM('"+item.name+"')\">Delete</a></td>" + 
 					"<td><a href = \"goToEditDetailsVM\" onclick = \"initDetailsVM('" + item.name + "')\">Edit</a></td>" + 
+					"<td><a onclick = \"toggleStatus('"+item.name+"')\">" + item.on + "</a></td>" +
 					"</tr>" : "</tr>")
 				);
 			});
 		}
 	});
 }
+
+function toggleStatus(name)
+{
+	forSrv = [name];
+	
+	s = JSON.stringify(forSrv);
+	
+	$.ajax({
+		url: "/toggleVMStatus",
+		type: "POST",
+		contentType: "application/json",
+		dataType: "json",
+		data: s,
+		complete: function()
+		{
+			listVMs();
+		}
+	});
+}
+
 
 function initDetailsVM(name)
 {
