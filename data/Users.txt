@@ -1,0 +1,3 @@
+a@a.com|a|a|a|ime1|ADMIN
+s@s.com|s|s|s||SUPERADMIN
+c@c.com|c|c|c|ime1|CLIENT
