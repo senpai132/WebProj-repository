@@ -1,6 +1,5 @@
-bbb|null|cat1|d3||false
-vDod|null|v2|d2||false
+dsa|ORG1|cat1|||false
 VM2|ORG2|cat1|||false
 VM1|ORG1|cat1|||false
-vcxvxcvxc|null|cat1|d1,vcx||false
+VM4|ORG1|cat1|d1||false
 VM3|ORG3|cat1|||false

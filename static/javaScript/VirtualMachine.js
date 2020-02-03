@@ -209,7 +209,7 @@ function initSelectTags(category, organisation)
 	initOrganisationSelect(organisation);
 }
 
-function initOrganisationSelect()
+function initOrganisationSelect(id)
 {
 	$.ajax({
 		url: "/getOrganisations",
@@ -496,7 +496,7 @@ function fillActiveDiscs(foundVM)
 			
 			discsReturned = JSON.parse(data.responseText);
 			discsReturned.forEach(function(item){
-				$("#freeDiscsEdit").append(
+				$("#freeDiscs").append(
 					"<tr>" +
 					"<td>"+item.name+"</td>" +
 					"<td>"+item.type+"</td>" +

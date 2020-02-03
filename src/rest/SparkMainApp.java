@@ -11,6 +11,7 @@ import static spark.Spark.staticFiles;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
@@ -578,6 +579,7 @@ public class SparkMainApp {
 				for(Disc d : discs.values())
 					if(d.getParentVM().equals(""))
 						localDiscs.add(d);
+				localDiscs.removeIf(Objects::isNull);
 				
 				return g.toJson(localDiscs);
 			}
