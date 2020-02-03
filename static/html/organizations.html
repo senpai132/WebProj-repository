@@ -5,16 +5,67 @@
 		<title>Users</title>
 		<script src = "../javaScript/jquery.min.js"></script>
 		<script src = "../javaScript/organizations.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	</head>
 <body>
-	<table id="table_organizations" border="1">
-		<tr>
-			<th>Ime</th>
-			<th>Opis</th>
-			<th>Logo</th>
-		</tr>
-	</table>
-	
-	<a href="/rest/goToNewOrganization">Dodaj novu organizaciju</a>
+	<div class="container h-100">
+	  <div class="row m-4">
+	    <div class="col">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarText">
+			    <ul class="navbar-nav mr-auto">
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="#">Organizations</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="#">Users</a>
+			      </li>
+			    </ul>
+			    <a class="navbar-text">
+			      Logout
+			    </a>
+			  </div>
+			</nav>
+	    </div>
+	  </div>
+	  <div class="row m-4">
+	    <div class="col m-4">
+			<div class="card text-white bg-light" style="max-width: 18rem;">
+			  	<div class="card-body">
+	   				<ul class="navbar-nav mr-auto">
+				      <li class="nav-item active">
+				        <a class="nav-link" href="#">All organizations</a>
+				      </li>
+				      <li class="nav-item">
+				        <a class="nav-link" href="/rest/goToNewOrganization">Add organization</a>
+				      </li>
+				    </ul>
+			  	</div>
+			</div>
+	    </div>
+	    <div class="col-8 m-4">
+			<div class="card text-white bg-light">
+			  	<div class="card-body">
+			    	<table class="table" id="table_organizations">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">Name</th>
+								<th scope="col">Description</th>
+								<th scope="col">Logo</th>
+								<th scope="col"></th>
+							</tr>
+						</thead>
+					</table>
+			  	</div>
+			</div>
+	    </div>
+	  </div>
+	</div>
 </body>
 </html>

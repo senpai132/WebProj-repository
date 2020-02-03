@@ -31,10 +31,10 @@ function loadOrganizations() {
 				
 				for(let org of d.orgs) {
 					table.append(`<tr>
-						<td>${org.name}</td>
-						<td>${org.description}</td>
-						<td><img height="50" width="50" src="${org.logo}"/></td>
-						<td><a href="/rest/goToEditOrganization" onclick="setEditOrganization('${org.name}')">Edit</a></td>
+						<td class="align-middle">${org.name}</td>
+						<td class="align-middle">${org.description}</td>
+						<td class="align-middle"><img height="50" width="50" src="${org.logo}"/></td>
+						<td class="align-middle"><a href="/rest/goToEditOrganization" onclick="setEditOrganization('${org.name}')">Edit</a></td>
 						</tr>`);
 				}
 			}

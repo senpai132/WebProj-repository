@@ -1,4 +1,5 @@
 $(document).ready( function() {
+	$("#error_message").hide();
 	init();
 });
 
@@ -15,28 +16,31 @@ function getFormData($form){
 
 function login() {
 	var error = false;
+	$("#error_message").hide();
 	
 	if(!validateEmail(document.getElementById("email").value))
 	{
-		$("#email_error").html("<font color = \"red\">* Invalid email format</font>");
+		$("#email_error").show();
+		$("#email_error").html("Email is invalid");
 		error = true;
 	}
 	else {
-		$("#email_error").html("");
+		$("#email_error").hide();
 	}
 
 	if(document.getElementById("password").value == "")
 	{
-		$("#password_error").html("<font color = \"red\">* This field is required</font>");
+		$("#password_error").show();
+		$("#password_error").html("Password can't be empty");
 		error = true;
 	}
 	else {
-		$("#password_error").html("");
+		$("#password_error").hide();
 	}
 
 	if (!error) {
-		var $form = $("#login_form");
-		var data = getFormData($form);
+		var form = $("#login_form");
+		var data = getFormData(form);
 
 		var s = JSON.stringify(data);
 		$.ajax({
@@ -47,9 +51,10 @@ function login() {
 			dataType:"json",
 			complete: function(data) {
 				d = JSON.parse(data.responseText);
-
+				console.log(d);
 				if(!d.result)
 				{
+					$("#error_message").show();
 					$("#error_message").html(d.message);
 				}
 				else {
