@@ -27,6 +27,7 @@ import dataFlow.ReadData;
 import enums.Roles;
 import logicForDiscs.DiscsHandler;
 import logicForOrganizations.OrganizationHandler;
+import logicForUsers.UserHandler;
 import logicForVM_Categories.VM_CategoriesHandler;
 import logicForVMs.VirtualMachineHandler;
 import spark.Session;
@@ -51,19 +52,6 @@ public class SparkMainApp {
 		vms = ReadData.readVMs();
 		discs = ReadData.readDiscs();
 		vmcs = ReadData.readVM_Categories();
-		
-		//TODO remove
-		if (users.size() == 0) {
-			users.put("s@s.com", new User("s@s.com", "s", "s", "s", null, Roles.SUPERADMIN));
-			users.put("c@c.com", new User("c@c.com", "c", "c", "c", "ime1", Roles.CLIENT));
-			users.put("a@a.com", new User("a@a.com", "a", "a", "a", "ime1", Roles.ADMIN));
-		}
-		
-		if (orgs.size() == 0) {
-			orgs.put("ime1", new Organization("ime1", "opis1", "../logos/default.png"));
-			orgs.put("ime2", new Organization("ime2", "opis2", "../logos/default.png"));
-			orgs.put("ime3", new Organization("ime3", "opis3", "../logos/default.png"));
-		}
 
 		post("/rest/login", (req,res) -> {
 			res.type("application/json");
@@ -258,6 +246,156 @@ public class SparkMainApp {
 			}
 
 			return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
+		get("/rest/goToEditUser", (req,res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String result = "true";
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				halt(403, "Unauthorized operation!");
+				result = "false";
+			}
+			
+			return "{\"result\":" + result + "}";
+		});
+		
+		after("/rest/goToEditUser", (req,res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null && u.getRole() != Roles.CLIENT) {
+				res.redirect("/html/edit_user.html", 301);
+			}
+		});
+		
+		post("/rest/setEditUser", (req, res) -> {
+			res.type("application/json");
+			String[] data = g.fromJson(req.body(), String[].class);
+            String result = "true";
+            String message = "\"\"";
+
+            Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+				message = "\"You cannot be client\"";
+			}
+			else if (u.getRole() == Roles.ADMIN && !orgs.get(u.getOrganization()).getUsers().contains(data[0])) {
+				result = "false";
+				message = "\"You don't have rights to edit user from other organization\"";
+			}
+			else {
+				ss.attribute("editUserEmail", data[0]);
+			}
+
+            return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
+		get("/rest/getEditUser", (req, res) -> {
+			res.type("application/json");
+			String result = "true";
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String userEmail = ss.attribute("editUserEmail");
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+			}
+			else if (u.getRole() == Roles.ADMIN && !orgs.get(u.getOrganization()).getUsers().contains(userEmail)) {
+				result = "false";
+			}
+
+			return "{\"user\": " + g.toJson(users.get(userEmail)) + ", \"result\": " + result + "}";
+		});
+		
+		post("/rest/editUser", (req,res) -> {
+			res.type("application/json");
+            User newUser = g.fromJson(req.body(), User.class);
+            String result = "true";
+            String message = "\"\"";
+            
+            Session ss = req.session(true);
+			User u = ss.attribute("user");
+			String oldUserEmail = ss.attribute("editUserEmail");
+			User userFound = users.get(oldUserEmail);
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+				message = "\"You must be superadmin\"";
+			}
+			else if (u.getRole() == Roles.ADMIN) {
+				if (!orgs.get(userFound.getOrganization()).getUsers().contains((u.getEmail()))) {
+					result = "false";
+					message = "\"You are not in organization\"";
+				}
+			}
+			else {
+				if (newUser.getPassword() == null || newUser.getPassword().isEmpty()) {
+					result = "false";
+					message = "\"Password is reqired\"";
+				}
+				else if (newUser.getName() == null || newUser.getName().isEmpty()) {
+					result = "false";
+					message = "\"Name is reqired\"";
+				}
+				else if (newUser.getLastName() == null || newUser.getLastName().isEmpty()) {
+					result = "false";
+					message = "\"Last name is reqired\"";
+				}
+				else {
+					if (userFound.getRole() == Roles.SUPERADMIN) {
+						newUser.setRole(Roles.SUPERADMIN);
+					}
+					
+					String editMsg = UserHandler.EditUser(orgs, users, newUser, oldUserEmail);
+		            if (editMsg != null) {
+		            	message = "\"" + editMsg + "\"";
+		            	result = "false";
+		            }
+				}
+			}
+
+            return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
+		post("/rest/deleteUser", (req,res) -> {
+			res.type("application/json");
+			String[] data = g.fromJson(req.body(), String[].class);
+            String result = "true";
+            String message = "\"\"";
+            
+            Session ss = req.session(true);
+			User u = ss.attribute("user");
+			User userFound = users.get(data[0]);
+			
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+				message = "\"You must be superadmin\"";
+			}
+			else if (u.getEmail().equals(data[0])) {
+				result = "false";
+				message = "\"You cannot delete yourself\"";
+			}
+			else if (u.getRole() == Roles.ADMIN) {
+				if (!orgs.get(userFound.getOrganization()).getUsers().contains((u.getEmail()))) {
+					result = "false";
+					message = "\"You are not in organization\"";
+				}
+			}
+			else {
+				String deleteMsg = UserHandler.DeleteUser(orgs, users, userFound.getEmail());
+	            if (deleteMsg != null) {
+	            	message = "\"" + deleteMsg + "\"";
+	            	result = "false";
+	            }
+			}
+
+            return "{\"result\": " + result + ", \"message\": " + message + "}";
 		});
 
 		get("/rest/goToOrganizations", (req, res) -> {

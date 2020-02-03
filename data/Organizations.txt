@@ -1,1 +1,3 @@
-ORG1|||aa@aa.com|x
+ime1|desc1|../logos/default.png|a@a.com#c@c.com|x
+ime2|desc2|../logos/default.png||x
+ime3|desc3|../logos/default.png||x
