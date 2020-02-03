@@ -20,14 +20,14 @@ function addSecurity()
 	if(userType === "client")
 	{
 		$("#addVMSecurity").hide();
-		$("#organisation").hide();
+		$("#organisation123").hide();
 		$("#users").hide();
 		$("#categories").hide();
 		
 	}
 	if(userType === "admin");
 	{
-		$("#organisation").hide();
+		$("#organisation123").hide();
 		$("#users").hide();
 		$("#organisationS").attr("disabled", "disabled");
 		$("#categories").hide();
@@ -35,7 +35,7 @@ function addSecurity()
 	if(userType === "superadmin")
 	{
 		$("#addVMSecurity").show();
-		$("#organisation").show();
+		$("#organisation123").show();
 		$("#users").show();
 		$("#categories").show();
 		$("#organisationS").prop("disabled", false);
@@ -47,7 +47,7 @@ function editSecurity()
 	if(userType === "client")
 	{
 		$("#addVMSecurity").hide();
-		$("#organisation").hide();
+		$("#organisation123").hide();
 		$("#users").hide();
 		$("#organisationDetails").attr("disabled", "disabled");
 		$("#categoryDetails").prop("disabled", "disabled");
@@ -56,7 +56,7 @@ function editSecurity()
 	}
 	if(userType === "admin");
 	{
-		$("#organisation").hide();
+		$("#organisation123").hide();
 		$("#users").hide();
 		$("#organisationDetails").attr("disabled", "disabled");
 		$("#categoryDetails").prop("readonly", false);
@@ -67,7 +67,7 @@ function editSecurity()
 	if(userType === "superadmin")
 	{
 		$("#addVMSecurity").show();
-		$("#organisation").show();
+		$("#organisation123").show();
 		$("#users").show();
 		$("#organisationDetails").prop("readonly", false);
 		$("#categoryDetails").prop("readonly", false);
@@ -101,20 +101,20 @@ function indexSecurity()
 	if(userType === "client")
 	{
 		$("#addVMSecurity").hide();
-		$("#organisation").hide();
+		$("#organisation123").hide();
 		$("#users").hide();
 		$("#categories").hide();
 	}
 	if(userType === "admin");
 	{
-		$("#organisation").hide();
+		$("#organisation123").hide();
 		$("#users").hide();
 		$("#categories").hide();
 	}
 	if(userType === "superadmin")
 	{
 		$("#addVMSecurity").show();
-		$("#organisation").show();
+		$("#organisation123").show();
 		$("#users").show();
 		$("#categories").show();
 	}
