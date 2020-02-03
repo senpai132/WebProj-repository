@@ -51,7 +51,7 @@ public class OrganizationHandler {
 	
 	private static String extractImageFromBytes(String logo, String imgPath) throws FileNotFoundException, IOException { 
 		if(logo == null || logo.isEmpty()) {
-			if (!imgPath.isEmpty() && imgPath != null) {
+			if (imgPath != null && !imgPath.isEmpty()) {
 				return imgPath;
 			}
 			else {

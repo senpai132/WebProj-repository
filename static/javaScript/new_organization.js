@@ -1,5 +1,6 @@
 $(document).ready( function() {
 	init();
+	$("#error_message").hide();
 });
 
 function getFormData($form){
@@ -35,19 +36,21 @@ function addOrganization() {
 	if(document.getElementById("name").value == "")
 	{
 		$("#name_error").html("Name is required");
+		$("#name_error").show();
 		error = true;
 	}
 	else {
-		$("#name_error").html("");
+		$("#name_error").hide();
 	}
 
 	if(document.getElementById("description").value == "")
 	{
 		$("#description_error").html("Description is required");
+		$("#description_error").show();
 		error = true;
 	}
 	else {
-		$("#description_error").html("");
+		$("#description_error").hide();
 	}
 	
 	if (!error) {
@@ -89,8 +92,8 @@ function getImgBytes(callback, data) {
             reader.readAsBinaryString(logoImg.files[0]);
             return;
         } else {
-            var error = $("#image_error");
-            error.text("Please select image that is lower then 1MB");
+            var error = $("#logo_error");
+            error.html("Please select image that is lower then 1MB");
             error.show();
             return;
         }
