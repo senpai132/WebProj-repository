@@ -4,7 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Users</title>
 		<script src = "../javaScript/jquery.min.js"></script>
-		<script src = "../javaScript/edit_user.js"></script>
+		<script src = "../javaScript/edit_profile.js"></script>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	</head>
 	<body>
@@ -28,12 +28,12 @@
 				      </li>
 				      <li class="nav-item" id = "categories">
 				        <a class="nav-link" href="/goToVM_Categories">VM categories</a>
-				      </li>		
+				      </li>
 				      <li class="nav-item">
 				        <a class="nav-link" href="/goToDiscs">Discs</a>
 				      </li>	
 				    </ul>
-				    <a class="navbar-text mr-3" href="/rest/goToEditProfile">
+				    <a class="navbar-text mr-3">
 				      Edit profile
 				    </a>
 				    <a class="navbar-text" href="/rest/logout">
@@ -44,25 +44,11 @@
 		    </div>
 		  </div>
 		  <div class="row m-4">
-		    <div class="col m-4">
-				<div class="card text-white bg-light" style="max-width: 18rem;">
-				  	<div class="card-body">
-		   				<ul class="navbar-nav mr-auto">
-					      <li class="nav-item active">
-					        <a class="nav-link" href="/rest/goToUsers">All users</a>
-					      </li>
-					      <li class="nav-item">
-					        <a class="nav-link" href="/rest/goToNewUser">Add user</a>
-					      </li>
-					    </ul>
-				  	</div>
-				</div>
-		    </div>
-		    <div class="col-8 m-4">
+		    <div class="col">
 				<div class="card bg-light">
 					<div class="card-header">Edit user</div>
 				  	<div class="card-body">
-				    	<form id ="edit_user_form">
+				    	<form id ="edit_profile_form">
 							<div class="form-group">
 							    <label for="email">Email address</label>
 							    <input name="email" type="email" class="form-control" id="email" readonly>
@@ -71,6 +57,13 @@
 						    	<label for="password">Password</label>
 							    <input name="password" type="password" class="form-control" id="password">
 							    <div class="invalid-feedback" id="password_error">
+									
+						        </div>
+						  	</div>
+						  	<div class="form-group">
+						    	<label for="password_repeat">Repeat password</label>
+							    <input type="password" class="form-control" id="password_repeat">
+							    <div class="invalid-feedback" id="repeat_password_error">
 									
 						        </div>
 						  	</div>
@@ -94,12 +87,9 @@
 						  	</div>
 						  	<div class="form-group">
 						    	<label for="role">Role</label>
-							    <select name="role" id="role" class="form-control">
-									<option value="ADMIN">Admin</option>
-									<option value="CLIENT">Client</option>
-								</select>
+						    	<input id="role" type="text" class="form-control" name="role" readonly></input>
 						  	</div>
-						  	<button type="button" class="btn btn-primary" onclick="editUser()">Edit</button>
+						  	<button type="button" class="btn btn-primary" onclick="editProfile()">Edit</button>
 						</form>
 						<div class="alert alert-danger mt-2" id="error_message" role="alert">
 				  		</div>

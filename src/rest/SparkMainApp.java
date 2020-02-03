@@ -398,6 +398,80 @@ public class SparkMainApp {
             return "{\"result\": " + result + ", \"message\": " + message + "}";
 		});
 
+		get("/rest/goToEditProfile", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null) {
+				halt(403, "Unauthorized operation!");
+			}
+			
+			return "{\"message\":false}";
+		});
+		
+		after("/rest/goToEditProfile", (req, res) -> {
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u != null) {
+				res.redirect("/html/edit_profile.html", 301);
+			}
+		});
+		
+		get("/rest/getLoggedUser", (req, res) -> {
+			res.type("application/json");
+			String result = "true";
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+
+			if (u == null) {
+				result = "false";
+			}
+			
+			return "{\"user\": " + g.toJson(u) + ", \"result\": " + result + "}";
+		});
+		
+		post("/rest/editProfile", (req,res) -> {
+			res.type("application/json");
+            User newUser = g.fromJson(req.body(), User.class);
+            String result = "true";
+            String message = "\"\"";
+            
+            Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if (u == null) {
+				result = "false";
+				message = "\"You must be logged\"";
+			}
+			else {
+				if (newUser.getPassword() == null || newUser.getPassword().isEmpty()) {
+					result = "false";
+					message = "\"Password is reqired\"";
+				}
+				else if (newUser.getName() == null || newUser.getName().isEmpty()) {
+					result = "false";
+					message = "\"Name is reqired\"";
+				}
+				else if (newUser.getLastName() == null || newUser.getLastName().isEmpty()) {
+					result = "false";
+					message = "\"Last name is reqired\"";
+				}
+				else {
+					String editMsg = UserHandler.EditUser(orgs, users, newUser, u.getEmail());
+		            if (editMsg != null) {
+		            	message = "\"" + editMsg + "\"";
+		            	result = "false";
+		            }
+				}
+			}
+
+            return "{\"result\": " + result + ", \"message\": " + message + "}";
+		});
+		
 		get("/rest/goToOrganizations", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);
