@@ -15,6 +15,81 @@ function getFormData($form)
 	return indexed_array;
 }
 
+function indexSecurity()
+{
+	if(userType === "client")
+	{
+		$("#addDiscSecurity").hide();
+		$("#organisations").hide();
+		$("#users").hide();
+		$("#categories").hide();
+	}
+	if(userType === "admin");
+	{
+		$("#organisations").hide();
+		$("#users").hide();
+		$("categories").hide();
+	}
+	if(userType === "superadmin")
+	{
+		$("#addDiscSecurity").show();
+		$("#organisations").show();
+		$("#users").show();
+		$("#categories").show();
+	}
+}
+
+function editSecurity()
+{
+	if(userType === "client")
+	{
+		$("#addVMSecurity").hide();
+		$("#organisations").hide();
+		$("#users").hide();
+		$("#categories").hide();
+		$("#nameEdit").attr("disabled", "disabled");
+		$("#typeEdit").prop("disabled", "disabled");
+		$("#capacityEdit").prop("disabled", "disabled");
+		$("#parentVMSelectEdit").prop("disabled", "disabled");
+	}
+	if(userType === "admin");
+	{
+		$("#organisations").hide();
+		$("#categories").hide();
+		$("#users").hide();
+		$("#organisationDetails").attr("disabled", "disabled");
+		$("#categoryDetails").prop("readonly", false);
+		$("#nameDetails").prop("readonly", false);
+	}
+	if(userType === "superadmin")
+	{
+		$("#addVMSecurity").show();
+		$("#organisation").show();
+		$("#users").show();
+		$("#organisationDetails").prop("readonly", false);
+		$("#categoryDetails").prop("readonly", false);
+		$("#nameDetails").prop("readonly", false);
+	}
+}
+
+function getUserType(callback)
+{
+	$.ajax({
+		url: "/rest/getUserType",
+		type:"GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			user = JSON.parse(data.responseText);
+			userType = user.role;
+			
+			callback();
+			listDiscs();
+		}
+	});
+}
+
 function initSelectTag(id)
 {
 	$.ajax({
@@ -110,8 +185,8 @@ function listDiscs()
 					"<td>"+item.name+"</td>" +
 					"<td>"+item.type+"</td>" +
 					"<td>"+item.capacity+"</td>" +
-					"<td>"+item.parentVM+"</td>" + 
-					"<td><a onclick = \"deleteDisc('"+item.name+"')\">Delete</a></td>" + 
+					"<td>"+item.parentVM+"</td>" + (userType != "client" ?
+					"<td><a onclick = \"deleteDisc('"+item.name+"')\">Delete</a></td>" : "") +
 					"<td><a href = \"/goToEditDetailsDisc\" onclick = \"initDetailsDisc('" + item.name + "')\">Edit</a></td>" + 
 					"</tr>"
 				);

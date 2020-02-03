@@ -55,7 +55,7 @@ public class Disc {
 
 	@Override
 	public String toString() {
-		return name + "|" + type + "|" + capacity + "|" + parentVM;
+		return name + "|" + parentVM + "|" + capacity + "|" + type;
 	}
 	
 	

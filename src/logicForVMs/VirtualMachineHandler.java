@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import beans.Disc;
+import beans.User;
 import beans.VM_Filter;
 import beans.VirtualMachine;
 import beans.VirtualMachineCategory;
+import dataFlow.WriteData;
+import enums.Roles;
 
 public class VirtualMachineHandler {
 
-	public static boolean addVM(HashMap<String, VirtualMachine> vms, VirtualMachine vm, String[] discNames, HashMap<String, Disc> discs) 
+	public static boolean addVM(HashMap<String, VirtualMachine> vms, VirtualMachine vm, String[] discNames, HashMap<String, Disc> discs, User u) 
 	{	
 		if(vms.containsKey(vm.getName()))
 			return false;
@@ -34,9 +37,13 @@ public class VirtualMachineHandler {
 				
 		
 		vm.setDiscs(vmDiscs);
+		if(u.getRole() == Roles.ADMIN)
+			vm.setOrganisation(u.getOrganization());
 		vms.put(vm.getName(), vm);
 		for(VirtualMachine m : vms.values())
 			System.out.println(m);
+		WriteData.writeVMs(vms);
+		WriteData.writeDiscs(discs);
 		return true;
 	}
 
@@ -52,6 +59,8 @@ public class VirtualMachineHandler {
 		vms.remove(vm.getName());
 		for(VirtualMachine m : vms.values())
 			System.out.println(m);
+		WriteData.writeVMs(vms);
+		WriteData.writeDiscs(discs);
 		return true;
 	}
 
@@ -85,13 +94,14 @@ public class VirtualMachineHandler {
 		vmPair[1].setDiscs(newDiscs);
 		
 		vms.put(vmPair[1].getName(), vmPair[1]);
-		
+		WriteData.writeVMs(vms);
+		WriteData.writeDiscs(discs);
 		return true;
 	}
 	
 	public static ArrayList<VirtualMachine> getFilteredVMs(HashMap<String, VirtualMachine> vms, VM_Filter filter, HashMap<String, VirtualMachineCategory> vmcs) {
 		ArrayList<VirtualMachine> vmsFiltered = new ArrayList<VirtualMachine>();
-		System.out.println("Usao");
+		
 		if(vms.containsKey(filter.getName()))
 		{
 			System.out.println("Nasao po imenu");

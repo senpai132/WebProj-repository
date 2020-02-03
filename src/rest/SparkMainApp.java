@@ -303,6 +303,11 @@ public class SparkMainApp {
 
 			return "{\"orgs\": " + g.toJson(curr) + ", \"result\": " + result + "}";
 		});
+		
+		get("/getOrganisations", (req, res)-> {
+			
+			return g.toJson(orgs.values());
+		});
 
 		get("/rest/goToNewOrganization", (req, res) -> {
 			res.type("application/json");
@@ -503,7 +508,7 @@ public class SparkMainApp {
 			Session ss = req.session(true);
 			User u  =  ss.attribute("user");
 			
-			if(u == null || u.getRole() != Roles.SUPERADMIN)
+			if(u == null)
 			{
 				halt(403, "Unauthorized operation!");
 			}
@@ -560,7 +565,23 @@ public class SparkMainApp {
 			if(u == null)
 				halt(403, "Unauthorized operation!");
 			
-			return g.toJson(discs.values());
+			if(u.getRole() == Roles.SUPERADMIN)
+				return g.toJson(discs.values());
+			else
+			{
+				ArrayList<Disc> localDiscs = new ArrayList<Disc>();
+				
+				for(VirtualMachine v : vms.values())
+					if(v.getOrganisation().equals(u.getOrganization()))
+						for(String s : v.getDiscs())
+							localDiscs.add(discs.get(s));
+				for(Disc d : discs.values())
+					if(d.getParentVM().equals(""))
+						localDiscs.add(d);
+				
+				return g.toJson(localDiscs);
+			}
+			
 		});
 		
 		delete("/deleteDisc", (req, res) -> {
@@ -602,7 +623,7 @@ public class SparkMainApp {
 				halt(403, "Unauthorized operation!");
 			
 			String[] selectedDiscs = ss.attribute("selectedDiscs");
-			Status status = new Status(VirtualMachineHandler.addVM(vms, vm, selectedDiscs, discs));
+			Status status = new Status(VirtualMachineHandler.addVM(vms, vm, selectedDiscs, discs, u));
 			return g.toJson(status);
 		});
 		
@@ -615,7 +636,16 @@ public class SparkMainApp {
 			if(u == null)
 				halt(403, "Unauthorized operation!");
 			
-			return g.toJson(vms.values());
+			if(u.getRole() == Roles.SUPERADMIN)
+				return g.toJson(vms.values());
+			else
+			{
+				ArrayList<VirtualMachine> localMachines = new ArrayList<VirtualMachine>();
+				for(VirtualMachine v : vms.values())
+					if(v.getOrganisation().equals(u.getOrganization()))
+						localMachines.add(v);
+				return g.toJson(localMachines);
+			}
 		});
 		
 		delete("/deleteVM", (req, res) -> {
@@ -671,7 +701,7 @@ public class SparkMainApp {
 			
 			String[] selectedDiscs = ss.attribute("selectedDiscs");
 			
-			return VirtualMachineHandler.editVM(vms, vmPair, discs, selectedDiscs);
+			return g.toJson(new Status(VirtualMachineHandler.editVM(vms, vmPair, discs, selectedDiscs)));
 		});
 		
 		get("/initVM_Sliders", (req, res)->{
@@ -692,7 +722,7 @@ public class SparkMainApp {
 		});
 		
 		after("/goToVirtualMachines", (req, res) -> {
-			res.redirect("/html/dummyWorkWithVM.html", 301);
+			res.redirect("/", 301);
 		});
 		
 		get("/goToNewVM",  (req, res) -> {

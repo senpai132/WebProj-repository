@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import beans.Disc;
 import beans.VirtualMachine;
+import dataFlow.WriteData;
 
 public class DiscsHandler {
 	public static boolean addDisc(HashMap<String, Disc> discs, Disc disc, HashMap<String, VirtualMachine> vms)
@@ -16,8 +17,10 @@ public class DiscsHandler {
 			vms.get(disc.getParentVM()).getDiscs().add(disc.getName());
 		
 		discs.put(disc.getName(), disc);
+		WriteData.writeDiscs(discs);
 		for(Disc m : discs.values())
 			System.out.println(m);
+		WriteData.writeVMs(vms);
 		return true;
 	}
 	
@@ -31,6 +34,8 @@ public class DiscsHandler {
 		discs.remove(disc.getName());
 		for(Disc m : discs.values())
 			System.out.println(m);
+		WriteData.writeDiscs(discs);
+		WriteData.writeVMs(vms);
 		return true;
 	}
 
@@ -52,6 +57,8 @@ public class DiscsHandler {
 		discs.put(discPair[1].getName(), discPair[1]);
 		for(Disc m : discs.values())
 			System.out.println(m);
+		WriteData.writeDiscs(discs);
+		WriteData.writeVMs(vms);
 		return true;
 	}
 

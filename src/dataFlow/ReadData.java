@@ -86,7 +86,8 @@ public class ReadData {
 			while((line = br.readLine()) != null)
 			{
 				String[] parts = line.split("\\|");
-				Disc disc = new Disc(parts[0], DiskTypes.valueOf(parts[1]), Integer.parseInt(parts[2]), parts[3]);
+				System.out.println(parts.length);
+				Disc disc = new Disc(parts[0], DiskTypes.valueOf(parts[3]), Integer.parseInt(parts[2]), parts[1]);
 				discs.put(disc.getName(), disc);
 			}
 		}

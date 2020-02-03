@@ -11,7 +11,9 @@
 		
 		
 		<script>
-			$(document).ready(listVMs);
+			$(document).ready(function(){
+				getUserType(indexSecurity);
+			});
 		</script>
 	</head>
 <body>
@@ -26,22 +28,22 @@
 			  <div class="collapse navbar-collapse" id="navbarText">
 			    <ul class="navbar-nav mr-auto">
 			      <li class="nav-item active">
-			        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+			        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
 			      </li>
-			      <li class="nav-item">
+			      <li class="nav-item" id = "organisation">
 			        <a class="nav-link" href="/rest/goToOrganizations">Organizations</a>
 			      </li>
-			      <li class="nav-item">
+			      <li class="nav-item" id = "users">
 			        <a class="nav-link" href="/rest/goToUsers">Users</a>
 			      </li>
-			      <li class="nav-item">
+			      <li class="nav-item" id = "categories">
 			        <a class="nav-link" href="/goToVM_Categories">VM categories</a>
 			      </li>		
 			      <li class="nav-item">
 			        <a class="nav-link" href="/goToDiscs">Discs</a>
 			      </li>	
 			    </ul>
-			    <a class="navbar-text">
+			    <a class="navbar-text" href="/rest/logout">
 			      Logout
 			    </a>
 			  </div>
@@ -56,7 +58,7 @@
 				      <li class="nav-item active">
 				        <a class="nav-link" href="/goToVirtualMachines">All virtual machines</a>
 				      </li>
-				      <li class="nav-item">
+				      <li class="nav-item" id = "addVMSecurity">
 				        <a class="nav-link" href="/goToNewVM">Add VM</a>
 				      </li>
 				    </ul>
@@ -70,6 +72,68 @@
 			    	<table class="table" id="allVMs">
 						
 					</table>
+			  	</div>
+			</div>
+	    </div>
+	    <div class="col-8 m-4">
+			<div class="card bg-light">
+				<div class="card-header">Filter</div>
+			  	<div class="card-body">
+				  	<form>
+						<div class="form-group">
+						    <label for="name">Name</label>
+						    <input name="findVMName" type="text" class="form-control" id="findVMName">
+					  		<div class="invalid-feedback" id="nameEmpty">
+				
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Min Number of cores</label>
+						    <input type = "text" name = "minCores" id = "minCores" class="form-control">
+						    <div class="invalid-feedback" id="minCoresError">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Max Number of cores</label>
+						    <input type = "text" name = "maxCores" id = "maxCores" class="form-control">
+						    <div class="invalid-feedback" id="maxCoresError">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Min RAM</label>
+						    <input type = "text" name = "minRAM" id = "minRAM" class="form-control">
+						    <div class="invalid-feedback" id="minRAMError">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Max RAM</label>
+						    <input type = "text" name = "maxRAM" id = "maxRAM" class="form-control">
+						    <div class="invalid-feedback" id="maxRAMError">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Min GPU cores</label>
+						    <input type = "text" name = "minGPU" id = "minGPU" class="form-control">
+						    <div class="invalid-feedback" id="minGPUError">
+								
+					        </div>
+					  	</div>
+					  	<div class="form-group">
+					    	<label for="description">Max GPU cores</label>
+						    <input type = "text" name = "maxGPU" id = "maxGPU" class="form-control">
+						    <div class="invalid-feedback" id="maxGPUError">
+								
+					        </div>
+					  	</div>
+					  	<button type="button" class="btn btn-primary mt-3 float-right" onclick="filterVMs()">Filter</button>
+					</form>
+				</div>
+				<div class="alert alert-danger mt-2" id="error_message" role="alert">
+
 			  	</div>
 			</div>
 	    </div>

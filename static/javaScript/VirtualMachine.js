@@ -15,6 +15,111 @@ function getFormData($form)
 	return indexed_array;
 }
 
+function addSecurity()
+{
+	if(userType === "client")
+	{
+		$("#addVMSecurity").hide();
+		$("#organisation").hide();
+		$("#users").hide();
+		$("#categories").hide();
+		
+	}
+	if(userType === "admin");
+	{
+		$("#organisation").hide();
+		$("#users").hide();
+		$("#organisationS").attr("disabled", "disabled");
+		$("#categories").hide();
+	}
+	if(userType === "superadmin")
+	{
+		$("#addVMSecurity").show();
+		$("#organisation").show();
+		$("#users").show();
+		$("#categories").show();
+		$("#organisationS").prop("disabled", false);
+	}
+}
+
+function editSecurity()
+{
+	if(userType === "client")
+	{
+		$("#addVMSecurity").hide();
+		$("#organisation").hide();
+		$("#users").hide();
+		$("#organisationDetails").attr("disabled", "disabled");
+		$("#categoryDetails").prop("disabled", "disabled");
+		$("#nameDetails").prop("disabled", "disabled");
+		$("#categories").hide();
+	}
+	if(userType === "admin");
+	{
+		$("#organisation").hide();
+		$("#users").hide();
+		$("#organisationDetails").attr("disabled", "disabled");
+		$("#categoryDetails").prop("readonly", false);
+		$("#nameDetails").prop("readonly", false);
+		$("#categories").hide();
+		$("#organisationS").attr("disabled", "disabled");
+	}
+	if(userType === "superadmin")
+	{
+		$("#addVMSecurity").show();
+		$("#organisation").show();
+		$("#users").show();
+		$("#organisationDetails").prop("readonly", false);
+		$("#categoryDetails").prop("readonly", false);
+		$("#nameDetails").prop("readonly", false);
+		$("#categories").show();
+		$("#organisationS").prop("disabled", false);
+	}
+}
+
+function getUserType(callback)
+{
+	$.ajax({
+		url: "/rest/getUserType",
+		type:"GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			user = JSON.parse(data.responseText);
+			userType = user.role;
+			
+			callback();
+			listVMs();
+				
+		}
+	});
+}
+
+function indexSecurity()
+{
+	if(userType === "client")
+	{
+		$("#addVMSecurity").hide();
+		$("#organisation").hide();
+		$("#users").hide();
+		$("#categories").hide();
+	}
+	if(userType === "admin");
+	{
+		$("#organisation").hide();
+		$("#users").hide();
+		$("#categories").hide();
+	}
+	if(userType === "superadmin")
+	{
+		$("#addVMSecurity").show();
+		$("#organisation").show();
+		$("#users").show();
+		$("#categories").show();
+	}
+}
+
 function initFreeDisks(id)
 {
 	$.ajax({
@@ -53,7 +158,7 @@ function saveSelectedDiscs(callback)
 		sList +=  this.checked ? $(this).val() + "," : "";
 	});
 	sList += "]";
-	alert(sList);
+	
 	$.ajax({
 		url: "/saveSelectedDiscs",
 		type: "POST",
@@ -81,9 +186,19 @@ function editVM()
 		data: s,
 		contentType: "application/json",
 		dataType: "json",
-		complete: function()
+		complete: function(data)
 		{
-			alert("VM edited successfully");
+			if(data.responseText == "Unauthorized operation!")
+				return;
+			status1 = JSON.parse(data.responseText);
+			if(status1.statusAkcije == true)
+			{
+				alert("VM edited successfully");
+				window.location.assign("/");
+			}
+			else
+				alert("Error");
+				
 		}
 	});
 }
@@ -91,7 +206,29 @@ function editVM()
 function initSelectTags(category, organisation)
 {
 	initCategorySelect(category);
-	//initOrganisationSelect();
+	initOrganisationSelect(organisation);
+}
+
+function initOrganisationSelect()
+{
+	$.ajax({
+		url: "/getOrganisations",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			VM_Categories = JSON.parse(data.responseText);
+			$("#"+id).html("");
+			VM_Categories.forEach(function(item){
+				$("#"+id).append(
+					"<option value = \"" + item.name + "\">" +
+					item.name + 
+					"</option>"
+				);
+			});
+		}
+	});
 }
 
 function initCategorySelect(id)
@@ -163,11 +300,11 @@ function listVMs()
 					"<tr>" +
 					"<td>"+item.name+"</td>" +
 					"<td>"+item.organisation+"</td>" +
-					"<td>"+item.category+"</td>" + (1 === 1 ?
-					"<td><a onclick = \"initDeleteVM('"+item.name+"')\">Delete</a></td>" + 
+					"<td>"+item.category+"</td>" + (userType != "client"  ?
+					"<td><a onclick = \"initDeleteVM('"+item.name+"')\">Delete</a></td>" : "") + 
 					"<td><a href = \"goToEditDetailsVM\" onclick = \"initDetailsVM('" + item.name + "')\">Edit</a></td>" + 
 					"<td><a onclick = \"toggleStatus('"+item.name+"')\">" + item.on + "</a></td>" +
-					"</tr>" : "</tr>")
+					"</tr>"
 				);
 			});
 		}
@@ -264,11 +401,13 @@ function addVM()
 		complete: function(data)
 		{
 			alert("VM added successfully");
-			alert(data.responseText);
 			stat = JSON.parse(data.responseText);
-			alert(stat.statusAkcije);
 			if(stat.statusAkcije == true)
 				window.location.assign("/");
+			else
+			{
+				alert("Error");
+			}
 			
 		}
 	});
@@ -324,6 +463,8 @@ function findVM_Category(category, ind)
 		dataType: "json",
 		complete: function(data)
 		{
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			VM_CategoriesReturned = JSON.parse(data.responseText);
 			VM_CategoriesReturned.forEach(function(item){
 				if(item.name == category)
@@ -352,6 +493,7 @@ function fillActiveDiscs(foundVM)
 		data: s,
 		complete: function(data)
 		{
+			
 			discsReturned = JSON.parse(data.responseText);
 			discsReturned.forEach(function(item){
 				$("#freeDiscsEdit").append(
@@ -532,9 +674,17 @@ function filterVMs()
 		data: s,
 		complete: function(data){
 			var vms = JSON.parse(data.responseText);
-			$("#filteredVMs").html("");
+			$("#allVMs").html("<thead class=\"thead-dark\">"+
+					"<tr>"+
+					"<th scope=\"col\">Name</th>"+
+					"<th scope=\"col\">Organisation</th>"+
+					"<th scope=\"col\">Category</th>"+
+					"<th scope=\"col\"></th>"+
+					"<th scope=\"col\"></th>"+
+				"</tr>"+
+			"</thead>");
 			vms.forEach(function(item, indeks){
-				$("#filteredVMs").append(
+				$("#allVMs").append(
 					"<tr>" +
 					"<td>"+item.name+"</td>" +
 					"<td>"+item.organisation+"</td>" +

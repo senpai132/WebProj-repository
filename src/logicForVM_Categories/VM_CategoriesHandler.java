@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import beans.VirtualMachine;
 import beans.VirtualMachineCategory;
+import dataFlow.WriteData;
 
 public class VM_CategoriesHandler {
 
@@ -14,6 +15,7 @@ public class VM_CategoriesHandler {
 			return false;
 		
 		VM_Categories.put(VM_category.getName(), VM_category);
+		WriteData.writeVMCs(VM_Categories);
 		return true;
 	}
 	
@@ -28,6 +30,7 @@ public class VM_CategoriesHandler {
 			return false;
 		
 		VM_Categories.remove(vmc.getName());
+		WriteData.writeVMCs(VM_Categories);
 		return true;
 	}
 	
@@ -42,7 +45,7 @@ public class VM_CategoriesHandler {
 		
 		VM_Categories.remove(VMC_Pair[0].getName());
 		VM_Categories.put(VMC_Pair[1].getName(), VMC_Pair[1]);
-		
+		WriteData.writeVMCs(VM_Categories);
 		return true;		
 	}
 	
