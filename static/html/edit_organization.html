@@ -54,8 +54,8 @@
 				<div class="card-header">Edit organization</div>
 			  	<div class="card-body">
 				  	<form id ="edit_organization_form">
-				  		<div class="form-row">
-				  			<div class="form-col">
+				  		<div class="row">
+				  			<div class="col-7">
 				  				<div class="form-group">
 							    <label for="name">Name</label>
 							    <input name="name" type="text" class="form-control" id="name">
@@ -78,11 +78,11 @@
 									</div>
 								</div>
 				  			</div>
-							<div class="form-col">
+							<div class="col-1">
 								<img src="" class="ml-3" id="imgLogo" height="200" width="200" />
-							</div>
+							</div> 
 						</div>
-					  	<button type="button" class="btn btn-primary mt-3 mr-5 float-right" onclick="editOrganization()">Edit</button>
+						<button type="button" class="btn btn-primary mt-3 float-right" onclick="editOrganization()">Edit</button>
 					</form>
 				</div>
 				<div class="alert alert-danger mt-2" id="error_message" role="alert">

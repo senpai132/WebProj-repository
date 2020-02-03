@@ -180,10 +180,13 @@ public class SparkMainApp {
 			
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
-
+			String result = "true";
+			
 			ArrayList<User> curr = new ArrayList<User>();
-			if (u.getRole() == Roles.SUPERADMIN) {
-				
+			if (u == null || u.getRole() == Roles.CLIENT) {
+				result = "false";
+			}
+			else if (u.getRole() == Roles.SUPERADMIN) {
 				for(User user : users.values()) {
 					curr.add(user);
 				}
@@ -194,7 +197,7 @@ public class SparkMainApp {
 				}
 			}
 
-			return "{\"users\": " + g.toJson(curr) + "}";
+			return "{\"users\": " + g.toJson(curr) + ", \"result\": " + result + "}";
 		});
 		
 		get("/rest/goToNewUser", (req, res) -> {
@@ -223,7 +226,7 @@ public class SparkMainApp {
 			String payload = req.body();
 			User u = g.fromJson(payload, User.class);
 			String result = "false";
-			String message = "";
+			String message = "\"\"";
 			
 			Session ss = req.session(true);
 			User logged = ss.attribute("user");
@@ -294,7 +297,7 @@ public class SparkMainApp {
 			Session ss = req.session(true);
 			User u = ss.attribute("user");
 			
-			if (u == null || u.getRole() != Roles.SUPERADMIN) {
+			if (u == null || u.getRole() == Roles.CLIENT) {
 				result = "false";
 			}
 

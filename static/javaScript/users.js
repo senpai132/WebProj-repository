@@ -9,11 +9,11 @@ function initUsers() {
 		complete: function(data){
 			d = JSON.parse(data.responseText);
 
-			if(d.superadmin || d.admin) {
-				loadUsers(d.superadmin);
+			if(!d.logged || d.role == "client") {
+				window.location.replace("/");
 			}
 			else {
-				window.location.replace("/");
+				loadUsers(d.role == "superadmin");
 			}
 		}
 	});
@@ -26,15 +26,20 @@ function loadUsers(superAdmin) {
 		complete: function(data){
 			d = JSON.parse(data.responseText);
 			
-			var users = d.users;
-			var table = $("#table_users");
+			if (d.result) {
+				var users = d.users;
+				var table = $("#table_users");
 
-			for(let user of users) {
-				table.append(makeTableRow(user, superAdmin));
+				for(let user of users) {
+					table.append(makeTableRow(user, superAdmin));
+				}
+				
+				if (!superAdmin) {
+					$("#org_column").hide();
+				}
 			}
-			
-			if (!superAdmin) {
-				$("#org_column").hide();
+			else {
+				window.location.replace("/");
 			}
 		}
 	});
@@ -50,7 +55,9 @@ function makeTableRow(user, superAdmin) {
 	if (superAdmin) {
 		row = row.concat(`<td>${user.organization}</td>`);
 	}
-	row = row.concat(`</tr>`)
+	row = row.concat(`<td><a href="#" onclick="">Edit</a></td>
+					  <td><a href="#" onclick="">Delete</a></td>
+					  </tr>`);
 	
 	return row;
 }

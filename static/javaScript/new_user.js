@@ -1,3 +1,8 @@
+$(document).ready( function() {
+	init();
+	$("#error_message").hide();
+});
+
 function getFormData($form){
 		var unindexed_array = $form.serializeArray();
 		var indexed_array = {};
@@ -15,7 +20,7 @@ function init() {
 		type: "GET",
 		complete: function(data){
 			d = JSON.parse(data.responseText);
-			if(!d.logged) {
+			if(!d.logged || d.role == "client") {
 				window.location.replace("/");
 			}
 			else {
@@ -36,62 +41,85 @@ function loadOrganizations() {
 		type: "GET",
 		complete: function(data){
 			d = JSON.parse(data.responseText);
-
-			for(let org of d.orgs) {
-				$("#role").append(`<option value="${org}">${org}</option>`)
+			
+			if (d.result) {
+				for(let org of d.orgs) {
+					$("#organization").append(`<option value="${org.name}">${org.name}</option>`)
+				}
+			}
+			else {
+				window.location.replace("/");
 			}
 		}
 	});
 }
 
 function addUser() {
+	var error = false;
+	$("#error_message").hide();
+	
 	if(!validateEmail(document.getElementById("email").value))
 	{
-		$("#mailError").html("<font color = \"red\">* Invalid email format</font>");
-		return;
+		$("#email_error").html("Invalid email");
+		$("#email_error").show();
+		error = true;
 	}
-	$("#mailError").html("");
+	else {
+		$("#email_error").hide();
+	}
 
 	if(document.getElementById("password").value === "")
 	{
-		$("#passError").html("<font color = \"red\">* This field is required</font>");
-		return;
+		$("#password_error").html("Password is required");
+		$("#password_error").show();
+		error = true;
 	}
-	$("#passError").html("");
+	else {
+		$("#password_error").hide();
+	}
 	
 	if(document.getElementById("name").value === "")
 	{
-		$("#nameError").html("<font color = \"red\">* This field is required</font>");
-		return;
+		$("#name_error").html("Name is required");
+		$("#name_error").show();
+		error = true;
 	}
-	$("#nameError").html("");
+	else {
+		$("#name_error").hide();
+	}
 	
 	if(document.getElementById("lastName").value === "")
 	{
-		$("#lastNameError").html("<font color = \"red\">* This field is required</font>");
-		return;
+		$("#lastName_error").html("Last name is required");
+		$("#lastName_error").show();
+		error = true;
 	}
-	$("#lastNameError").html("");
+	else {
+		$("#lastName_error").hide();
+	}
 	
-	var data = getFormData($("#new_user_form"));
-	
-	var s = JSON.stringify(data);
-	$.ajax({
-		url: "/rest/addUser",
-		type:"POST",
-		data: s,
-		contentType:"application/json",
-		dataType:"json",
-		complete: function(data) {
-			d = JSON.parse(data.responseText);
-			if(!d.result)
-			{
-				$("#invalidLogIn").html(d.message);
+	if (!error) {
+		var data = getFormData($("#new_user_form"));
+		
+		var s = JSON.stringify(data);
+		$.ajax({
+			url: "/rest/addUser",
+			type:"POST",
+			data: s,
+			contentType:"application/json",
+			dataType:"json",
+			complete: function(data) {
+				d = JSON.parse(data.responseText);
+				if(!d.result)
+				{
+					$("#error_message").html(d.message);
+					$("#error_message").show();
+				}
+				else 
+					window.location.replace("/html/users.html");
 			}
-			else 
-				window.location.replace("/html/users.html");
-		}
-	});
+		});
+	}
 }
 
 function validateEmail(email) {
