@@ -1,5 +1,6 @@
 $(document).ready( function() {
 	init();
+	$("#error_message").hide();
 });
 
 function getFormData($form){
@@ -38,7 +39,7 @@ function loadOrganization() {
 		type: "GET",
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
-			console.log(d);
+
 			if(d.result) {
 				
 				$("#name").val(d.org.name);
@@ -54,23 +55,26 @@ function loadOrganization() {
 
 function editOrganization() {
 	var error = false;
-	
+	$("#error_message").hide();
+
 	if(document.getElementById("name").value == "")
 	{
 		$("#name_error").html("Name is required");
+		$("#name_error").show();
 		error = true;
 	}
 	else {
-		$("#name_error").html("");
+		$("#name_error").hide();
 	}
 
 	if(document.getElementById("description").value == "")
 	{
 		$("#description_error").html("Description is required");
+		$("#description_error").show();
 		error = true;
 	}
 	else {
-		$("#description_error").html("");
+		$("#description_error").hide();
 	}
 	
 	if (!error) {

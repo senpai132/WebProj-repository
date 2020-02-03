@@ -5,31 +5,92 @@
 		<title>Users</title>
 		<script src = "../javaScript/jquery.min.js"></script>
 		<script src = "../javaScript/edit_organization.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	</head>
 <body>
-	<form id ="edit_organization_form">
-		<table>
-			<tr>
-				<td>Ime:</td>
-				<td><input id="name" type="text" name="name"></td>
-				<td><p id ="name_error"></p></td>
-			</tr>
-			<tr>
-				<td>Opis</td>
-				<td><input type="text" name="description" id="description"></td>
-				<td><p id="description_error"></p></td>
-			</tr>
-			<tr>
-				<td>Logo</td>
-				<td><input type="file" name="logo" id="logo" accept="image/*"></td>
-				<td><img id="imgLogo" height="50" width="50"/></td>
-				<td><p id="image_error"></p></td>
-			</tr>
-			<tr>
-				<td align="center" colspan="3"><input type="button" value="Izmeni" onclick="editOrganization()"></td>
-			</tr>
-		</table>
-		<p id ="error_message"></p>
-	</form>
+<div class="container h-100">
+	  <div class="row m-4">
+	    <div class="col">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarText">
+			    <ul class="navbar-nav mr-auto">
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="/rest/goToOrganizations">Organizations</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link" href="#">Users</a>
+			      </li>
+			    </ul>
+			    <a class="navbar-text">
+			      Logout
+			    </a>
+			  </div>
+			</nav>
+	    </div>
+	  </div>
+	  <div class="row m-4">
+	    <div class="col m-4">
+			<div class="card text-white bg-light" style="max-width: 18rem;">
+			  	<div class="card-body">
+	   				<ul class="navbar-nav mr-auto">
+				      <li class="nav-item active">
+				        <a class="nav-link" href="/rest/goToOrganizations">All organizations</a>
+				      </li>
+				      <li class="nav-item">
+				        <a class="nav-link" href="/rest/goToNewOrganization">Add organization</a>
+				      </li>
+				    </ul>
+			  	</div>
+			</div>
+	    </div>
+	    <div class="col-8 m-4">
+			<div class="card bg-light">
+				<div class="card-header">Edit organization</div>
+			  	<div class="card-body">
+				  	<form id ="edit_organization_form">
+				  		<div class="form-row">
+				  			<div class="form-col">
+				  				<div class="form-group">
+							    <label for="name">Name</label>
+							    <input name="name" type="text" class="form-control" id="name">
+						  		<div class="invalid-feedback" id="name_error">
+					
+						        </div>
+							  	</div>
+							  	<div class="form-group">
+							    	<label for="description">Description</label>
+								    <input name="description" type="text" class="form-control" id="description">
+								    <div class="invalid-feedback" id="description_error">
+										
+							        </div>
+							  	</div>
+							  	<div class="custom-file">
+								  	<input type="file" class="custom-file-input" name="logo" accept="image/*" id="logo">
+								  	<label class="custom-file-label" for="logo">Choose file...</label>
+								  	<div class="invalid-feedback" id="logo_error">
+								  		
+									</div>
+								</div>
+				  			</div>
+							<div class="form-col">
+								<img src="" class="ml-3" id="imgLogo" height="200" width="200" />
+							</div>
+						</div>
+					  	<button type="button" class="btn btn-primary mt-3 mr-5 float-right" onclick="editOrganization()">Edit</button>
+					</form>
+				</div>
+				<div class="alert alert-danger mt-2" id="error_message" role="alert">
+
+			  	</div>
+			</div>
+	    </div>
+	  </div>
+	</div>
 </body>
 </html>

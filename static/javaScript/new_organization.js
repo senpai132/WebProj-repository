@@ -32,6 +32,7 @@ function init() {
 function addOrganization() {
 
 	var error = false;
+	$("#error_message").hide();
 	
 	if(document.getElementById("name").value == "")
 	{

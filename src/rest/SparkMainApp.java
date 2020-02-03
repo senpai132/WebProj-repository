@@ -62,10 +62,6 @@ public class SparkMainApp {
 			orgs.put("ime1", new Organization("ime1", "opis1", "../logos/default.png"));
 			orgs.put("ime2", new Organization("ime2", "opis2", "../logos/default.png"));
 			orgs.put("ime3", new Organization("ime3", "opis3", "../logos/default.png"));
-			orgs.put("ime4", new Organization("ime4", "opis3", "../logos/default.png"));
-			orgs.put("ime5", new Organization("ime5", "opis3", "../logos/default.png"));
-			orgs.put("ime6", new Organization("ime6", "opis3", "../logos/default.png"));
-			orgs.put("ime7", new Organization("ime7", "opis3", "../logos/default.png"));
 		}
 
 		post("/rest/login", (req,res) -> {
