@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>Discs overview</title>
+		<script src="../javaScript/jquery.min.js"></script>
+		<script src = "../javaScript/Disc.js"></script>
+	</head>
+	<body>
+		<form id = "addDisc">
+			<table>
+					
+				<tr>
+					<td>Name:</td>
+					<td><input id = "name" type = "text" name = "name"></td>
+					<td><p id = "nameEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Type: </td>
+					<td>
+						<select name = "type" id = "type">
+							<option value = "HDD">HDD</option>
+							<option value = "SDD">SDD</option>
+						</select>
+					</td>
+					<td><p id = "NoCEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Capacity: </td>
+					<td>
+						<input type = "text" name = "capacity" id = "capacity">
+					</td>
+					<td><p id = "capacityEmpty"></p></td>
+				</tr>
+				<tr>
+					<td>Parent VM: </td>
+					<td>
+						<select name = "parentVM" id = "parentVMSelect">
+							
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td align = "center" colspan = "3"><input type = "button" value = "Add" onclick = "addDisc()"></td>
+				</tr>
+			</table>	
+		</form>
+	</body>
+</html>

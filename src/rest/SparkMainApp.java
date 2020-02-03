@@ -468,6 +468,17 @@ public class SparkMainApp {
 		
 		post("/addVM_Category", (req, res) ->{
 			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() != Roles.SUPERADMIN)
+			{
+				halt(403, "Unauthorized operation!");
+				return false;
+			}
+				
+			
 			VirtualMachineCategory vmc;
 			
 			try {
@@ -485,11 +496,25 @@ public class SparkMainApp {
 		
 		get("/getVM_Categories", (req, res) -> {
 			res.type("application/json"); 
-
+			
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() != Roles.SUPERADMIN)
+			{
+				halt(403, "Unauthorized operation!");
+			}
+			
 			return g.toJson(vmcs.values());
 		});
 		
 		delete("/DeleteVM_Category", (req, res) -> {
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() != Roles.SUPERADMIN)
+				halt(403, "Unauthorized operation!");
+			
 			VirtualMachineCategory vmc = g.fromJson(req.body(), VirtualMachineCategory.class);
 			
 			return VM_CategoriesHandler.deleteVM_Category(vmcs, vmc, vms);
@@ -497,6 +522,13 @@ public class SparkMainApp {
 		
 		post("/EditVM_Category", (req, res) -> {
 			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() != Roles.SUPERADMIN)
+				halt(403, "Unauthorized operation!");
+			
 			VirtualMachineCategory[] VMC_Pair = g.fromJson(req.body(), VirtualMachineCategory[].class);
 			
 			return VM_CategoriesHandler.editVM_Category(vmcs, VMC_Pair, vms);
@@ -504,6 +536,13 @@ public class SparkMainApp {
 		
 		post("/addDisc", (req, res) ->{
 			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() == Roles.CLIENT)
+				halt(403, "Unauthorized operation!");
+			
 			Disc disc = g.fromJson(req.body(), Disc.class);
 
 			return DiscsHandler.addDisc(discs, disc, vms);
@@ -512,11 +551,24 @@ public class SparkMainApp {
 		get("/getDiscs", (req, res) -> {
 			res.type("application/json");
 			
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null)
+				halt(403, "Unauthorized operation!");
+			
 			return g.toJson(discs.values());
 		});
 		
 		delete("/deleteDisc", (req, res) -> {
 			String payload = req.body();
+			
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() != Roles.SUPERADMIN)
+				halt(403, "Unauthorized operation!");
+			
 			Disc disc = g.fromJson(payload, Disc.class);
 			
 			return DiscsHandler.removeDisc(discs, disc, vms);
@@ -524,6 +576,13 @@ public class SparkMainApp {
 		
 		post("/editDisc", (req, res) ->{
 			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() == Roles.CLIENT)
+				halt(403, "Unauthorized operation!");
+			
 			Disc[] discPair = g.fromJson(req.body(), Disc[].class);
 			
 			return DiscsHandler.editDisc(discs, discPair, vms);
@@ -534,6 +593,11 @@ public class SparkMainApp {
 			VirtualMachine vm = g.fromJson(req.body(), VirtualMachine.class);
 			Session ss = req.session(true);
 			
+			User u  =  ss.attribute("user");
+			
+			if(u == null || u.getRole() == Roles.CLIENT)
+				halt(403, "Unauthorized operation!");
+			
 			String[] selectedDiscs = ss.attribute("selectedDiscs");
 			Status status = new Status(VirtualMachineHandler.addVM(vms, vm, selectedDiscs, discs));
 			return g.toJson(status);
@@ -542,11 +606,23 @@ public class SparkMainApp {
 		get("/getVMs", (req, res) -> {
 			res.type("application/json");
 			
+			Session ss = req.session(true);
+			
+			User u  =  ss.attribute("user");
+			if(u == null)
+				halt(403, "Unauthorized operation!");
+			
 			return g.toJson(vms.values());
 		});
 		
 		delete("/deleteVM", (req, res) -> {
 			String payload = req.body();
+			Session ss = req.session(true);
+			
+			User u  =  ss.attribute("user");
+			if(u == null || u.getRole() == Roles.CLIENT)
+				halt(403, "Unauthorized operation!");
+			
 			VirtualMachine vm = g.fromJson(payload, VirtualMachine.class); 
 			
 			return VirtualMachineHandler.removeDisc(vms, vm, discs);
@@ -581,8 +657,15 @@ public class SparkMainApp {
 		
 		post("/editVM", (req, res) ->{
 			res.type("application/json");
-			VirtualMachine[] vmPair = g.fromJson(req.body(), VirtualMachine[].class);
+			
 			Session ss = req.session(true);
+			
+			User u  =  ss.attribute("user");
+			if(u == null || u.getRole() == Roles.CLIENT)
+				halt(403, "Unauthorized operation!");
+			
+			VirtualMachine[] vmPair = g.fromJson(req.body(), VirtualMachine[].class);
+			
 			String[] selectedDiscs = ss.attribute("selectedDiscs");
 			
 			return VirtualMachineHandler.editVM(vms, vmPair, discs, selectedDiscs);
@@ -639,10 +722,8 @@ public class SparkMainApp {
 			return "{\"result\":true}";			
 		});
 		
-		after("/goToEditDetailsVM", (req, res) -> {
-			
-			res.redirect("/html/edit_detailVM.html", 301);
-			
+		after("/goToEditDetailsVM", (req, res) -> {			
+			res.redirect("/html/edit_detailVM.html", 301);			
 		});
 		
 		post("/setNameDetailsVM", (req, res) -> {
@@ -733,6 +814,79 @@ public class SparkMainApp {
 			
 			return g.toJson(vmc);
 		});
+		
+		get("/goToDiscs",  (req, res) -> {
+			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u == null)
+				halt(403, "Unauthorized operation!");
+			
+			return g.toJson(new Status(true));			
+		});
+		
+		after("/goToDiscs", (req, res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u != null)
+				res.redirect("/html/viewDiscs.html", 301);
+		});
+		
+		get("/goToAddDisc",  (req, res) -> {
+			res.type("application/json");
+			
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u == null || u.getRole() == Roles.CLIENT)
+				halt(403, "Unauthorized operation!");
+			
+			return g.toJson(new Status(true));			
+		});
+		
+		after("/goToAddDisc", (req, res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u != null && (u.getRole() == Roles.SUPERADMIN || u.getRole() == Roles.ADMIN))
+				res.redirect("/html/addDisc.html", 301);
+		});
+		
+		get("/goToEditDetailsDisc",  (req, res) -> {
+			res.type("application/json");
+			
+			return g.toJson(new Status(true));			
+		});
+		
+		after("/goToEditDetailsDisc", (req, res) -> {
+			Session ss = req.session(true);
+			User u = ss.attribute("user");
+			
+			if(u != null)
+				res.redirect("/html/edit_detailDisc.html", 301);
+			
+		});
+		
+		post("/setNameDetailsDisc", (req, res) -> {
+			String[] data = g.fromJson(req.body(), String[].class);
+			Session ss = req.session(true);
+			
+			ss.attribute("editDisc", data[0]);
+			
+			return true;
+		});
+		
+		get("/getDetailsDisc", (req, res) -> {
+			
+			Session ss = req.session(true);
+			Disc disc = discs.get(ss.attribute("editDisc"));
+			
+			return g.toJson(disc);
+		});
+		
 	}
 	
 	public static boolean checkEmail(String email) {

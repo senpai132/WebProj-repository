@@ -24,6 +24,8 @@ function initSelectTag(id)
 		dataType: "json",
 		complete: function(data)
 		{
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			VMs = JSON.parse(data.responseText);
 			$("#"+id).html("");
 			$("#"+id).append("<option value = \"\"></option>");
@@ -53,10 +55,11 @@ function addDisc()
 		data: s,
 		contentType: "application/json",
 		dataType: "json",
-		complete: function()
+		complete: function(data)
 		{
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			alert("Disc added successfully");
-			listDiscs();
 		}
 	});
 }
@@ -70,10 +73,11 @@ function removeDisc(foundDisc)
 		contentType: "application/json",
 		dataType: "json",
 		data: s,
-		success: function()
+		success: function(data)
 		{
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			alert("Disc deleted successfully");
-			listDiscs();
 		}
 	});
 }
@@ -86,6 +90,8 @@ function listDiscs()
 		contentType: "application/json",
 		dataType: "json",
 		complete: function(data){
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			var discs = JSON.parse(data.responseText);
 			$("#allDiscs").html("");
 			discs.forEach(function(item, indeks){
@@ -96,12 +102,45 @@ function listDiscs()
 					"<td>"+item.capacity+"</td>" +
 					"<td>"+item.parentVM+"</td>" + 
 					"<td><a onclick = \"deleteDisc('"+item.name+"')\">Delete</a></td>" + 
-					"<td><a onclick = \"initEdit('" + item.name + "')\">Edit</a></td>" + 
+					"<td><a href = \"/goToEditDetailsDisc\" onclick = \"initDetailsDisc('" + item.name + "')\">Edit</a></td>" + 
 					"</tr>"
 				);
 			});
 		}
 	});
+}
+
+function initDetailsDisc(name)
+{
+	data = [name];
+	s = JSON.stringify(data);
+	
+	$.ajax(
+	{
+		url: "/setNameDetailsDisc",
+		type: "POST",
+		contentType: "application/json",
+		dataType: "json",
+		data: s
+	});	
+}
+
+function loadDetailsDisc()
+{
+	$.ajax(
+	{
+		url: "/getDetailsDisc",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data)
+		{
+			disc = JSON.parse(data.responseText);
+			
+			initEdit(disc.name);
+		}
+	});
+	
 }
 
 function initEdit(name)
@@ -185,10 +224,11 @@ function editDisc()
 		contentType: "application/json",
 		dataType: "json",
 		data: s,
-		success: function()
+		success: function(data)
 		{
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			alert("Disc edited successfully");
-			listDiscs();
 		}
 	});
 }
@@ -230,6 +270,8 @@ function getDiscs(name, callback)
 		dataType: "json",
 		complete: function(data)
 		{
+			if(data.responseText === "Unauthorized operation!")
+				return;
 			discsReturned = JSON.parse(data.responseText);
 			callback(name, removeDisc);
 		}
