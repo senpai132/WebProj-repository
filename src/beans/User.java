@@ -1,5 +1,7 @@
 package beans;
 
+import java.util.HashMap;
+
 import enums.Roles;
 
 public class User {
@@ -73,10 +75,12 @@ public class User {
 		this.role = role;
 	}
 
-	/*@Override
+	@Override
 	public String toString() {
-		return "User [email=" + email + ", password=" + password + ", name=" + name + ", lastName=" + lastName
-				+ ", organizacija=" + organizacija + ", role=" + role + "]";
-	}*/
+		
+		
+		return email + "|" + password + "|" + name + "|"
+				+ lastName + "|" + organization + "|" + role;
+	}
 	
 }

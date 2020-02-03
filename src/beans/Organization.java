@@ -63,5 +63,25 @@ public class Organization {
 		this.resources = resources;
 	}
 	
+	@Override
+	public String toString() {
+		
+		String users = "";
+		
+		for(String user : this.users) {
+			users += user + "#";
+		}
+		users = users.substring(0, users.length() - 1);
+		
+		String resources = "";
+		
+		for(String resource : this.resources) {
+			resources += resource + "#";
+		}
+		resources = resources.substring(0, resources.length() - 1);
+		
+		return name + "|" + description + "|" + logo + "|"
+				+ users + "|" + resources;
+	}
 	
 }
